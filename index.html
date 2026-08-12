@@ -1,0 +1,1814 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simplo Suplementos - Suplementos de Alta Performance para Sua Melhor Versão. Whey, Creatina, Pré-Treino & Mais.">
+  <title>Simplo Suplementos | Suplementos Para Sua Melhor Versão</title>
+  
+  <!-- Font Awesome Icons 6.4.0 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- html2pdf.js (Geração de Recibos em PDF para o Gestor) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Supabase Cloud Database Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Background Animated Grid Overlay -->
+  <div class="bg-grid-overlay"></div>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement-bar">
+    <i class="fa-solid fa-truck" style="font-size: 1.05rem;"></i>
+    <i class="fa-solid fa-bolt" style="font-size: 0.95rem; color: #fff;"></i>
+    <span>SEUS CLIENTES RECEBEM OS SUPLEMENTOS DA SUA LOJA NO MESMO DIA!</span>
+    <span style="margin-left: 0.5rem; font-weight: 700;">🔥 Oferta do Dia expira em:</span>
+    <span id="countdown-timer" class="countdown-box">04h : 17m : 03s</span>
+  </div>
+
+  <!-- Header Navigation Bar (Fidelidade total à Imagem Mobile & Desktop) -->
+  <header>
+    <div class="container nav-content">
+      <button id="btn-mobile-menu" class="mobile-menu-btn" title="Menu Navegação">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <!-- Logo Simplo Centralizada no Header Mobile/Desktop -->
+      <a href="#" class="brand-logo-wrap center-header-logo">
+        <img src="Simplo.png" alt="Simplo Suplementos Logo" class="brand-logo-img">
+      </a>
+
+      <!-- Center Navigation Links (Desktop) -->
+      <ul class="nav-center-menu">
+        <li><a href="#demo-store" class="active">INÍCIO</a></li>
+        <li><a href="#loja">PRODUTOS</a></li>
+        <li><a href="#categorias">CATEGORIAS</a></li>
+        <li><a href="#beneficios">BENEFÍCIOS</a></li>
+        <li><a href="#qualidade">DEPOIMENTOS</a></li>
+        <li><a href="#contato">CONTATO</a></li>
+      </ul>
+
+      <!-- Right Actions: Cart Badge & Store Link -->
+      <div class="nav-right-actions">
+
+        <button id="cart-trigger" class="nav-icon-btn" title="Ver Carrinho">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span id="cart-count" class="cart-icon-badge">0</span>
+        </button>
+
+        <a href="#loja" class="btn-header-store">LOJA ONLINE</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE SLIDE-OUT MENU DRAWER -->
+  <div id="mobile-menu-drawer" class="cart-drawer-overlay">
+    <div class="cart-drawer-content" style="width: 300px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <img src="Simplo.png" alt="Simplo Suplementos" style="height: 42px;">
+        <button id="btn-close-mobile-menu" class="btn-close-cart">&times;</button>
+      </div>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 1.2rem; font-family: var(--font-heading); font-weight: 800; font-size: 0.95rem;">
+        <li><a href="#demo-store" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">INÍCIO</a></li>
+        <li><a href="#loja" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">PRODUTOS</a></li>
+        <li><a href="#categorias" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">CATEGORIAS</a></li>
+        <li><a href="#beneficios" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">BENEFÍCIOS</a></li>
+        <li><a href="#qualidade" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">DEPOIMENTOS</a></li>
+        <li><a href="#contato" style="color: #FFF; text-decoration: none;" onclick="document.getElementById('btn-close-mobile-menu').click()">CONTATO</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LOJA VIRTUAL DA SIMPLO SUPLEMENTOS (TELA 1 & TELA 2 DA IMAGEM DE REFERÊNCIA) -->
+  <main id="demo-store" class="demo-section">
+
+    <!-- HERO SECTION (ESTILO PREMIUM COM LOGO AO FUNDO & TEXTOS ATRATIVOS) -->
+    <section class="hero-mockup-section">
+      <!-- Logo Simplo de Fundo Iluminada (Watermark Glow) -->
+      <img src="Simplo.png" alt="Simplo Logo Marca d'Água" class="hero-bg-logo-watermark">
+
+      <div class="container">
+        <div class="hero-mockup-grid">
+          
+          <div class="hero-left-content">
+            <div class="hero-top-tag-badge">
+              <i class="fa-solid fa-bolt" style="color: var(--primary-orange);"></i> ENTREGA NO MESMO DIA
+            </div>
+
+            <h1 class="hero-big-heading">
+              SUPLEMENTOS<br>
+              PARA SUA<br>
+              <span class="highlight-orange">MELHOR VERSÃO</span>
+            </h1>
+
+            <p class="hero-subtext">
+              Qualidade máxima, absorção rápida e matérias-primas importadas. O combustível de alta performance para quem leva o treino a sério e busca resultados de verdade.
+            </p>
+
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; width: 100%;">
+              <a href="#loja" class="btn-hero-cta">
+                COMPRAR AGORA <i class="fa-solid fa-bolt"></i>
+              </a>
+
+              <a href="https://wa.me/5581992470607" target="_blank" class="btn-hero-whatsapp">
+                <i class="fa-brands fa-whatsapp"></i> FALAR COM ATENDENTE
+              </a>
+            </div>
+
+            <div class="hero-trust-bullets">
+              <span><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i> 100% Originais</span>
+              <span><i class="fa-solid fa-truck" style="color: var(--primary-orange);"></i> Envio Imediato</span>
+              <span><i class="fa-solid fa-star" style="color: var(--gold);"></i> +1.500 Clientes</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 FEATURE COLUMNS BAR (GRID 2x2 MOBILE DA TELA 1) -->
+    <section id="beneficios" class="feature-columns-section">
+      <div class="container">
+        <div class="feature-columns-grid">
+          
+          <div class="feature-column-item">
+            <div class="feature-icon-wrap">
+              <i class="fa-solid fa-dumbbell"></i>
+            </div>
+            <h4 class="feature-title">MAIS DESEMPENHO</h4>
+            <p class="feature-desc">Supere seus limites todos os dias.</p>
+          </div>
+
+          <div class="feature-column-item">
+            <div class="feature-icon-wrap">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <h4 class="feature-title">MAIS ENERGIA</h4>
+            <p class="feature-desc">Foco e disposição para treinos intensos.</p>
+          </div>
+
+          <div class="feature-column-item">
+            <div class="feature-icon-wrap">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h4 class="feature-title">MAIS RESULTADOS</h4>
+            <p class="feature-desc">Suplementos que potencializam ganhos.</p>
+          </div>
+
+          <div class="feature-column-item">
+            <div class="feature-icon-wrap">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <h4 class="feature-title">MAIS SAÚDE</h4>
+            <p class="feature-desc">Cuide do seu corpo com qualidade.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIAS SECTION (GRID 3x2 RESPONSIVO DA TELA 1 & TELA 2) -->
+    <section id="categorias" class="categories-section">
+      <div class="container">
+        
+        <div class="section-title-divider">
+          <div class="title-line"></div>
+          <h2 class="section-main-heading">CATEGORIAS</h2>
+          <div class="title-line"></div>
+        </div>
+
+        <div class="categories-grid">
+          <a href="#loja" class="category-card" onclick="filterByCategory('hipertrofia')">
+            <div class="category-img-wrap">
+              <img src="whey_integralmedica.png" alt="Whey Protein" class="category-img">
+            </div>
+            <span class="category-name">WHEY PROTEIN <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+
+          <a href="#loja" class="category-card" onclick="filterByCategory('performance')">
+            <div class="category-img-wrap">
+              <img src="pretreino_horus.png" alt="Pré-Treino" class="category-img">
+            </div>
+            <span class="category-name">PRÉ-TREINO <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+
+          <a href="#loja" class="category-card" onclick="filterByCategory('saude')">
+            <div class="category-img-wrap">
+              <img src="creatina_integralmedica.png" alt="Creatina" class="category-img">
+            </div>
+            <span class="category-name">CREATINA <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+
+          <a href="#loja" class="category-card" onclick="filterByCategory('saude')">
+            <div class="category-img-wrap">
+              <img src="hero_supplements_pedestal.png" alt="BCAA" class="category-img">
+            </div>
+            <span class="category-name">BCAA <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+
+          <a href="#loja" class="category-card" onclick="filterByCategory('all')">
+            <div class="category-img-wrap">
+              <img src="shaker_bottle.png" alt="Acessórios" class="category-img">
+            </div>
+            <span class="category-name">ACESSÓRIOS <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+
+          <a href="#loja" class="category-card" onclick="filterByCategory('hipertrofia')">
+            <div class="category-img-wrap">
+              <img src="protein_bar.png" alt="Barras e Snacks" class="category-img">
+            </div>
+            <span class="category-name">BARRAS E SNACKS <i class="fa-solid fa-chevron-right"></i></span>
+          </a>
+        </div>
+
+        <div class="btn-center-outline">
+          <button class="btn-outline-orange">VER TODAS AS CATEGORIAS</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SEÇÃO RECOMENDADOR INTERATIVO DE COMBOS DO VENDEDOR VARELA -->
+    <section id="recomendador-combos" style="padding: 4rem 0; background: linear-gradient(180deg, rgba(8, 19, 33, 0.6) 0%, rgba(10, 28, 48, 0.9) 100%); position: relative; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
+      <div class="container" style="max-width: 900px;">
+        
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+          <span style="background: rgba(255, 107, 0, 0.15); color: var(--primary-orange); border: 1px solid var(--primary-orange); padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Recomendador Inteligente Vendedor Varela
+          </span>
+          <h2 style="font-size: 2.2rem; color: #fff; margin-top: 0.8rem; font-weight: 900; line-height: 1.2;">
+            MONTE SEU <span style="color: var(--primary-orange);">COMBO PERSONALIZADO</span>
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 0.5rem;">
+            Responda 3 perguntas rápidas para receber a indicação perfeita de suplementos para a sua rotina!
+          </p>
+        </div>
+
+        <!-- CONTAINER PRINCIPAL DO QUIZ / WIZARD -->
+        <div id="combo-quiz-container" class="combo-quiz-card" style="background: #081321; border: 1px solid var(--primary-orange); border-radius: 24px; padding: 2.5rem; backdrop-filter: blur(16px); box-shadow: 0 20px 50px rgba(0,0,0,0.6); position: relative; overflow: hidden;">
+          
+          <!-- INDICADOR DE PROGRESSO -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 1rem;">
+            <span id="quiz-step-label" style="font-size: 0.85rem; font-weight: 800; color: var(--primary-orange); text-transform: uppercase; letter-spacing: 0.5px;">Passo 1 de 3: Frequência de Treino</span>
+            <div style="display: flex; gap: 0.4rem;">
+              <span id="step-dot-1" class="quiz-step-dot active"></span>
+              <span id="step-dot-2" class="quiz-step-dot"></span>
+              <span id="step-dot-3" class="quiz-step-dot"></span>
+            </div>
+          </div>
+
+          <!-- ETAPA 1: FREQUÊNCIA DE TREINO -->
+          <div id="quiz-step-1" class="quiz-step-content active">
+            <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1.5rem; text-align: center;">
+              <i class="fa-solid fa-calendar-days" style="color: var(--primary-orange);"></i> Quantas vezes você treina na semana?
+            </h3>
+            
+            <div class="quiz-options-grid">
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(1, '1-2', '1 a 2 vezes por semana')">
+                <i class="fa-solid fa-person-walking quiz-opt-icon"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">1 a 2 vezes por semana</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Treino leve, foco em saúde e adaptação inicial.</span>
+                </div>
+              </button>
+
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(1, '3-4', '3 a 4 vezes por semana')">
+                <i class="fa-solid fa-dumbbell quiz-opt-icon"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">3 a 4 vezes por semana</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Frequência constante, busca por evolução real.</span>
+                </div>
+              </button>
+
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(1, '5-7', '5 a 7 vezes por semana')">
+                <i class="fa-solid fa-fire-flame-curved quiz-opt-icon"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">5 a 7 vezes por semana</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Treino pesado diário, alta exigência muscular.</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- ETAPA 2: OBJETIVO PRINCIPAL -->
+          <div id="quiz-step-2" class="quiz-step-content" style="display: none;">
+            <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1.5rem; text-align: center;">
+              <i class="fa-solid fa-bullseye" style="color: var(--primary-orange);"></i> Qual é o seu objetivo principal?
+            </h3>
+            
+            <div class="quiz-options-grid">
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(2, 'massa', 'Ganhar Massa Muscular & Força')">
+                <i class="fa-solid fa-bolt-lightning quiz-opt-icon" style="color: var(--primary-orange);"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">Ganhar Massa Muscular & Força</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Aumentar volume muscular e hipertrofia.</span>
+                </div>
+              </button>
+
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(2, 'definicao', 'Secar & Definir o Corpo')">
+                <i class="fa-solid fa-person-running quiz-opt-icon" style="color: var(--accent-green);"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">Secar & Definir o Corpo</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Queimar gordura sem perder massa magra.</span>
+                </div>
+              </button>
+
+              <button type="button" class="quiz-opt-btn" onclick="selectQuizStep(2, 'energia', 'Mais Energia & Foco nos Treinos')">
+                <i class="fa-solid fa-rocket quiz-opt-icon" style="color: var(--accent-cyan);"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">Mais Energia & Foco nos Treinos</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Acabar com o cansaço e acelerar o rendimento.</span>
+                </div>
+              </button>
+            </div>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <button type="button" onclick="goToQuizStep(1)" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; text-decoration: underline;">
+                <i class="fa-solid fa-arrow-left"></i> Voltar à pergunta anterior
+              </button>
+            </div>
+          </div>
+
+          <!-- ETAPA 3: PERFIL DE INVESTIMENTO -->
+          <div id="quiz-step-3" class="quiz-step-content" style="display: none;">
+            <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 1.5rem; text-align: center;">
+              <i class="fa-solid fa-tags" style="color: var(--primary-orange);"></i> Qual é o seu perfil de compra?
+            </h3>
+            
+            <div class="quiz-options-grid">
+              <button type="button" class="quiz-opt-btn" onclick="finishQuiz('basico')">
+                <i class="fa-solid fa-piggy-bank quiz-opt-icon" style="color: var(--accent-green);"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">Custo-Benefício (Kit Essencial)</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Suplementação essencial com o menor valor.</span>
+                </div>
+              </button>
+
+              <button type="button" class="quiz-opt-btn" onclick="finishQuiz('pro')">
+                <i class="fa-solid fa-crown quiz-opt-icon" style="color: var(--accent-yellow);"></i>
+                <div style="text-align: left;">
+                  <strong style="display: block; font-size: 1rem; color: #fff;">Resultado Máximo (Kit Completo PRO)</strong>
+                  <span style="font-size: 0.78rem; color: var(--text-muted);">Combinação de elite recomendada pelo Vendedor Varela.</span>
+                </div>
+              </button>
+            </div>
+
+            <div style="margin-top: 1.5rem; text-align: center;">
+              <button type="button" onclick="goToQuizStep(2)" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.85rem; cursor: pointer; text-decoration: underline;">
+                <i class="fa-solid fa-arrow-left"></i> Voltar à pergunta anterior
+              </button>
+            </div>
+          </div>
+
+          <!-- RESULTADO FINAL: COMBO PERSONALIZADO GERADO -->
+          <div id="quiz-step-result" class="quiz-step-content" style="display: none;">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+              <span style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">
+                <i class="fa-solid fa-circle-check"></i> SEU COMBO SINGULAR FOI GERADO!
+              </span>
+              <h3 id="result-combo-title" style="font-size: 1.6rem; color: #fff; margin-top: 0.6rem; font-weight: 900;">
+                Combo Hipertrofia Elite Varela
+              </h3>
+              <p id="result-combo-desc" style="color: var(--text-muted); font-size: 0.85rem; max-width: 600px; margin: 0.4rem auto 0;">
+                Recomendação personalizada para quem treina 5 a 7x na semana com foco em Massa Muscular.
+              </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; align-items: center; background: rgba(10, 28, 48, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 1.5rem;">
+              
+              <div style="text-align: center;">
+                <img id="result-combo-img" src="hero_supplements_pedestal.png" alt="Combo Personalizado" style="max-height: 180px; width: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));">
+              </div>
+
+              <div>
+                <h4 style="font-size: 0.9rem; color: var(--primary-orange); font-weight: 800; text-transform: uppercase; margin-bottom: 0.6rem;">
+                  <i class="fa-solid fa-box-open"></i> O que está incluso no seu combo:
+                </h4>
+                <ul id="result-combo-items" style="list-style: none; padding: 0; margin: 0 0 1.2rem 0; font-size: 0.88rem; color: #E2E8F0; display: flex; flex-direction: column; gap: 0.4rem;">
+                  <!-- Preenchido via JS -->
+                </ul>
+
+                <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 1rem;">
+                  <span id="result-combo-oldprice" style="text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem;">R$ 299,90</span>
+                  <span id="result-combo-price" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-green);">R$ 219,90</span>
+                  <span id="result-combo-badge" style="background: var(--accent-green); color: #000; font-size: 0.75rem; font-weight: 900; padding: 0.2rem 0.6rem; border-radius: 6px;">ECONOMIZE R$ 80</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                  <button id="btn-add-quiz-combo" type="button" class="btn-checkout-whatsapp" style="padding: 0.8rem; font-size: 0.9rem;">
+                    <i class="fa-solid fa-cart-plus"></i> Adicionar Meu Combo ao Carrinho
+                  </button>
+                  
+                  <button type="button" onclick="restartQuiz()" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; text-decoration: underline; text-align: center;">
+                    <i class="fa-solid fa-rotate-left"></i> Refazer teste de recomendação
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- LOJA SECTION (GRID DE PRODUTOS DA TELA 2) -->
+    <section id="loja" class="store-showcase-section">
+      <div class="container">
+        
+        <div class="section-title-divider">
+          <div class="title-line"></div>
+          <h2 class="section-main-heading">LOJA</h2>
+          <div class="title-line"></div>
+        </div>
+
+        <!-- Sub-Barra de Filtros e Ordenação conforme Tela 2 da Imagem -->
+        <div class="store-subbar">
+          <button class="btn-store-filter"><i class="fa-solid fa-sliders"></i> FILTROS</button>
+          <div class="store-sort-select-wrap">
+            <select class="store-sort-select">
+              <option value="popular">Mais vendidos</option>
+              <option value="price-asc">Menor Preço</option>
+              <option value="price-desc">Maior Preço</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Barra de Categorias Rápidas em Filtros -->
+        <div class="filter-tabs">
+          <button class="filter-btn active" data-filter="all">Todos os Produtos</button>
+          <button class="filter-btn" data-filter="hipertrofia">🔥 Hipertrofia & Ganho</button>
+          <button class="filter-btn" data-filter="performance">⚡ Pré-Treino & Energia</button>
+          <button class="filter-btn" data-filter="saude">🛡️ Força & Saúde</button>
+        </div>
+
+        <!-- Grid de Produtos Responsivo (2 Colunas Mobile / 5 Colunas Desktop) -->
+        <div class="products-grid-5cols">
+          
+          <!-- Produto 1 -->
+          <div class="product-card" data-id="p1" data-category="hipertrofia">
+            <div class="product-img-wrap" onclick="openProductDetail('p1')">
+              <img src="whey_integralmedica.png" alt="Whey Protein Concentrado 900g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p1')">WHEY PROTEIN CONCENTRADO 900G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(128)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 139,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto 2 -->
+          <div class="product-card" data-id="p2" data-category="performance">
+            <div class="product-img-wrap" onclick="openProductDetail('p2')">
+              <img src="pretreino_horus.png" alt="Pré-Treino Explosão 300g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p2')">PRÉ-TREINO EXPLOSÃO 300G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(96)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 89,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto 3 -->
+          <div class="product-card" data-id="p3" data-category="saude">
+            <div class="product-img-wrap" onclick="openProductDetail('p3')">
+              <img src="creatina_integralmedica.png" alt="Creatina Monohidratada 300g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p3')">CREATINA MONOHIDRATADA 300G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(74)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 59,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto 4 -->
+          <div class="product-card" data-id="p4" data-category="saude">
+            <div class="product-img-wrap" onclick="openProductDetail('p4')">
+              <img src="hero_supplements_pedestal.png" alt="BCAA 2:1:1 200g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p4')">BCAA 2:1:1 200G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(50)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 69,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto 5 -->
+          <div class="product-card" data-id="p5" data-category="hipertrofia">
+            <div class="product-img-wrap" onclick="openProductDetail('p5')">
+              <img src="protein_bar.png" alt="Protein Bar Chocolate 60g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p5')">PROTEIN BAR CHOCOLATE 60G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(42)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 8,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Produto 6 -->
+          <div class="product-card" data-id="p6" data-category="hipertrofia">
+            <div class="product-img-wrap" onclick="openProductDetail('p6')">
+              <img src="whey_integralmedica.png" alt="Whey Protein Isolado 900g" class="product-img">
+            </div>
+            <div class="product-info">
+              <h3 class="product-name" onclick="openProductDetail('p6')">WHEY PROTEIN ISOLADO 900G</h3>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                <span>(96)</span>
+              </div>
+              <div class="product-price-row">
+                <span class="current-price">R$ 169,90</span>
+              </div>
+              <button class="btn-add-cart">
+                COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="btn-center-outline" style="margin-top: 2rem;">
+          <button class="btn-outline-orange">VER TODOS OS PRODUTOS</button>
+        </div>
+
+      </div>
+    </section>
+
+
+
+    <!-- QUALIDADE QUE VOCÊ CONFIA BANNER (BANNER ATLETA DA TELA 1) -->
+    <section id="qualidade" class="container">
+      <div class="trust-quality-banner">
+        <img src="athlete_hero.png" alt="Atleta Simplo Suplementos" class="banner-athlete-img">
+
+        <div>
+          <h2 class="banner-content-title">
+            QUALIDADE QUE VOCÊ CONFIA,<br>
+            <span class="highlight-orange">RESULTADOS QUE VOCÊ VIVE!</span>
+          </h2>
+
+          <div class="banner-features-grid">
+            <div class="banner-feature-item">
+              <i class="fa-solid fa-award banner-feature-icon"></i>
+              <div>
+                <h4 class="banner-feature-h">PRODUTOS ORIGINAIS</h4>
+                <p class="banner-feature-p">Trabalhamos apenas com marcas 100% confiáveis e puras.</p>
+              </div>
+            </div>
+
+            <div class="banner-feature-item">
+              <i class="fa-solid fa-headset banner-feature-icon"></i>
+              <div>
+                <h4 class="banner-feature-h">ATENDIMENTO ESPECIALIZADO</h4>
+                <p class="banner-feature-p">Nossa equipe está pronta para te ajudar via WhatsApp.</p>
+              </div>
+            </div>
+
+            <div class="banner-feature-item">
+              <i class="fa-solid fa-medal banner-feature-icon"></i>
+              <div>
+                <h4 class="banner-feature-h">PREÇOS COMPETITIVOS</h4>
+                <p class="banner-feature-p">Melhores condições para você economizar de verdade.</p>
+              </div>
+            </div>
+
+            <div class="banner-feature-item">
+              <i class="fa-solid fa-bullseye banner-feature-icon"></i>
+              <div>
+                <h4 class="banner-feature-h">RESULTADOS COMPROVADOS</h4>
+                <p class="banner-feature-p">Suplementos que fazem a diferença no seu treino diário.</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.8rem;">
+            <a href="#loja" class="btn-hero-cta" style="width: 100%;">
+              LOJA ONLINE
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- TRUST & GUARANTEE BAR (COLUNAS DE CONFIANÇA) -->
+    <section class="trust-bar-section">
+      <div class="container">
+        <div class="trust-bar-grid">
+          
+          <div class="trust-col-item">
+            <i class="fa-solid fa-shield-halved trust-col-icon"></i>
+            <div>
+              <h4 class="trust-col-title">COMPRA 100% SEGURA</h4>
+              <p class="trust-col-desc">Seus dados protegidos e compra garantida.</p>
+            </div>
+          </div>
+
+          <div class="trust-col-item">
+            <i class="fa-solid fa-truck-fast trust-col-icon"></i>
+            <div>
+              <h4 class="trust-col-title">ENVIO PARA TODO O BRASIL</h4>
+              <p class="trust-col-desc">Entrega rápida e segura para você.</p>
+            </div>
+          </div>
+
+          <div class="trust-col-item">
+            <i class="fa-solid fa-box-open trust-col-icon"></i>
+            <div>
+              <h4 class="trust-col-title">TROCA FÁCIL</h4>
+              <p class="trust-col-desc">Garantia de satisfação ou seu dinheiro de volta.</p>
+            </div>
+          </div>
+
+          <div class="trust-col-item">
+            <i class="fa-solid fa-credit-card trust-col-icon"></i>
+            <div>
+              <h4 class="trust-col-title">PAGAMENTO FACILITADO</h4>
+              <p class="trust-col-desc">Parcele em até 12x no cartão de crédito.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PAINEL DE GESTÃO DA SIMPLO SUPLEMENTOS (MODO GESTOR DISPONÍVEL) -->
+  <section id="admin-dashboard" class="admin-section">
+    <div class="container">
+      
+      <div class="admin-header-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.8rem; color: #FFF; margin-bottom: 0.4rem;">
+            <i class="fa-solid fa-chart-line" style="color: var(--accent-green);"></i> Painel do Gestor <span style="color: var(--accent-green);">Simplo Suplementos</span>
+          </h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Controle completo da loja: Estoque, aprovação de pedidos, WhatsApp do cliente e múltiplos vendedores.</p>
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button id="btn-back-to-store" type="button" onclick="showStoreView()" style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); padding: 0.6rem 1.2rem; border-radius: 12px; font-size: 0.82rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-store"></i> Voltar para a Loja
+          </button>
+          <button id="btn-admin-logout" type="button" style="background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); padding: 0.6rem 1.2rem; border-radius: 12px; font-size: 0.82rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+            <i class="fa-solid fa-right-from-bracket"></i> Sair do Gestor
+          </button>
+        </div>
+      </div>
+
+      <!-- Sub-Navegação de Abas do Gestor -->
+      <div class="admin-subnav">
+        <button class="admin-subnav-btn active" data-tab="tab-stock">
+          <i class="fa-solid fa-boxes-stacked"></i> Controle de Estoque
+        </button>
+        <button class="admin-subnav-btn" data-tab="tab-orders">
+          <i class="fa-solid fa-receipt"></i> Pedidos do Dia (<span id="admin-orders-count">2</span>)
+        </button>
+        <button class="admin-subnav-btn" data-tab="tab-coupons">
+          <i class="fa-solid fa-ticket"></i> Cupons & Promoções
+        </button>
+        <button class="admin-subnav-btn" data-tab="tab-products">
+          <i class="fa-solid fa-cart-plus"></i> Cadastrar & Gerenciar Produtos
+        </button>
+        <button class="admin-subnav-btn" data-tab="tab-combos">
+          <i class="fa-solid fa-boxes-packing"></i> Gerenciar Combos
+        </button>
+        <button class="admin-subnav-btn" data-tab="tab-settings">
+          <i class="fa-solid fa-sliders"></i> Configurações da Loja
+        </button>
+      </div>
+
+      <!-- KPIs do Painel de Controle -->
+      <div class="admin-kpi-grid">
+        <div class="admin-kpi-card" style="border-color: var(--accent-green);">
+          <div class="admin-kpi-title">Faturamento de Hoje</div>
+          <div id="kpi-revenue" class="admin-kpi-value" style="color: var(--accent-green);">R$ 289,70</div>
+          <span id="kpi-revenue-tag" class="admin-kpi-tag" style="color: var(--accent-green);">Calculado via 2 pedido(s)</span>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-title">Pedidos Confirmados</div>
+          <div id="kpi-orders" class="admin-kpi-value">2 Pedidos</div>
+          <span id="kpi-orders-tag" class="admin-kpi-tag" style="color: var(--accent-cyan);">2 Entregas no Mesmo Dia</span>
+        </div>
+
+        <div class="admin-kpi-card">
+          <div class="admin-kpi-title">Ticket Médio por Cliente</div>
+          <div id="kpi-ticket" class="admin-kpi-value">R$ 144,85</div>
+          <span id="kpi-ticket-tag" class="admin-kpi-tag" style="color: var(--gold);">Whey Protein lidera vendas</span>
+        </div>
+
+        <div class="admin-kpi-card" style="border-color: var(--accent-red);">
+          <div class="admin-kpi-title">Alertas de Estoque Baixo</div>
+          <div id="kpi-stock-alert" class="admin-kpi-value" style="color: var(--accent-red);">0 Produtos</div>
+          <span id="kpi-stock-alert-tag" class="admin-kpi-tag" style="color: var(--accent-red);">Estoque Regular</span>
+        </div>
+      </div>
+
+      <!-- ABA 1: CONTROLE DE ESTOQUE -->
+      <div id="tab-stock" class="admin-tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <h3 style="font-size: 1.2rem; color: #fff;"><i class="fa-solid fa-list-check" style="color: var(--primary-orange);"></i> Estoque Atual da Vitrine</h3>
+          
+          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center;">
+            <button id="btn-save-all-stock" class="btn-primary" onclick="saveAllStockChanges()" style="background: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%); color: #fff; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; padding: 0.75rem 1.4rem; border-radius: 14px; border: 1px solid rgba(52, 211, 153, 0.4); box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); cursor: pointer; display: inline-flex; align-items: center; gap: 0.6rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; letter-spacing: 0.5px;">
+              <i class="fa-solid fa-floppy-disk" style="font-size: 1rem;"></i> Salvar Alterações de Estoque
+            </button>
+            <button id="btn-movement-report" class="btn-primary" style="background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 50%, #1E40AF 100%); color: #fff; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; padding: 0.75rem 1.4rem; border-radius: 14px; border: 1px solid rgba(96, 165, 250, 0.4); box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); cursor: pointer; display: inline-flex; align-items: center; gap: 0.6rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; letter-spacing: 0.5px;">
+              <i class="fa-solid fa-chart-pie" style="font-size: 1rem;"></i> Extrato de Movimentação Diária
+            </button>
+            <button class="admin-filter-btn active" data-admin-filter="all"><i class="fa-solid fa-layer-group"></i> Todos</button>
+            <button class="admin-filter-btn filter-btn-danger" data-admin-filter="danger"><i class="fa-solid fa-circle-xmark" style="color: #EF4444;"></i> Sem Estoque</button>
+            <button class="admin-filter-btn filter-btn-low" data-admin-filter="low"><i class="fa-solid fa-triangle-exclamation" style="color: #F59E0B;"></i> Estoque Baixo</button>
+          </div>
+        </div>
+
+        <div class="table-responsive-box">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Produto & Marca</th>
+                <th>Status Estoque</th>
+                <th>Estoque Atual (Unidades)</th>
+                <th>Vendas Totais</th>
+                <th>Ranking</th>
+                <th>Ajuste Rápido de Estoque (0 a 100)</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ABA 2: PEDIDOS DO DIA -->
+      <div id="tab-orders" class="admin-tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+          <h3 style="font-size: 1.2rem; color: #fff; margin: 0;"><i class="fa-solid fa-file-invoice-dollar" style="color: var(--accent-green);"></i> Gerenciador de Pedidos em Tempo Real</h3>
+          <button id="btn-orders-report" class="btn-primary" onclick="openOrdersReportModal()" style="background: linear-gradient(135deg, #10B981, #059669); font-size: 0.85rem; padding: 0.65rem 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; border-radius: 10px;">
+            <i class="fa-solid fa-file-contract"></i> Relatório de Vendas do Dia
+          </button>
+        </div>
+
+        <div class="table-responsive-box">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Cliente & WhatsApp</th>
+                <th>Endereço de Entrega</th>
+                <th>Forma de Pagamento</th>
+                <th>Itens do Pedido</th>
+                <th>Total</th>
+                <th>Status do Pedido</th>
+                <th>Ações do Gestor</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ABA 3: CUPONS DE DESCONTO -->
+      <div id="tab-coupons" class="admin-tab-content">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 1.5rem; border-radius: 16px; margin-bottom: 1.8rem; max-width: 650px;">
+          <h4 style="font-size: 1rem; color: #fff; margin-bottom: 1rem;"><i class="fa-solid fa-plus-circle" style="color: var(--gold);"></i> Criar Novo Cupom de Desconto</h4>
+          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem;">
+            <div style="flex: 1; min-width: 160px;">
+              <label class="admin-input-label">Código do Cupom:</label>
+              <input type="text" id="input-coupon-code" class="admin-input-field" placeholder="Ex: SIMPLO20" style="text-transform: uppercase;">
+            </div>
+            <div style="flex: 2; min-width: 200px;">
+              <label class="admin-input-label">Descrição do Desconto:</label>
+              <input type="text" id="input-coupon-desc" class="admin-input-field" placeholder="Ex: 20% OFF em toda a loja">
+            </div>
+          </div>
+          <button id="btn-create-coupon" class="btn-primary" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%); color: #FFF; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; padding: 0.75rem 1.4rem; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.4); box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); cursor: pointer; display: inline-flex; align-items: center; gap: 0.6rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-tag" style="font-size: 1rem;"></i> Cadastrar Cupom
+          </button>
+        </div>
+
+        <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 1rem;"><i class="fa-solid fa-tags" style="color: var(--gold);"></i> Cupons Ativos na Loja</h3>
+        <div class="table-responsive-box">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Cupom</th>
+                <th>Desconto</th>
+                <th>Usos Totais</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="coupons-table-body">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ABA 4: CADASTRAR & GERENCIAR PRODUTOS -->
+      <div id="tab-products" class="admin-tab-content">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 1.8rem; border-radius: 20px; margin-bottom: 2rem;">
+          <h4 style="font-size: 1.1rem; color: #fff; margin-bottom: 1.2rem;"><i class="fa-solid fa-plus-circle" style="color: var(--primary-orange);"></i> Cadastrar Novo Produto</h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label class="admin-input-label">Nome do Produto:</label>
+              <input type="text" id="input-new-prod-name" class="admin-input-field" placeholder="Ex: Whey Protein Isolado 900g">
+            </div>
+            <div>
+              <label class="admin-input-label">Marca / Fabricante:</label>
+              <input type="text" id="input-new-prod-brand" class="admin-input-field" placeholder="Ex: Integralmédica">
+            </div>
+            <div>
+              <label class="admin-input-label">Preço Atual (R$):</label>
+              <input type="number" step="0.01" id="input-new-prod-price" class="admin-input-field" placeholder="139.90">
+            </div>
+            <div>
+              <label class="admin-input-label">Preço Antigo (R$) (Opcional):</label>
+              <input type="number" step="0.01" id="input-new-prod-oldprice" class="admin-input-field" placeholder="169.90">
+            </div>
+            <div>
+              <label class="admin-input-label">Estoque Inicial (0 a 100):</label>
+              <input type="number" min="0" max="100" id="input-new-prod-stock" class="admin-input-field" value="25">
+            </div>
+            <div>
+              <label class="admin-input-label">Categoria do Produto:</label>
+              <select id="input-new-prod-category" class="admin-input-field" style="background: #0A1C30;" onchange="handleNewProductCategoryChange(this.value)">
+                <option value="hipertrofia">🔥 Hipertrofia & Ganho</option>
+                <option value="performance">⚡ Pré-Treino & Energia</option>
+                <option value="saude">🛡️ Força & Saúde</option>
+                <option value="__new__">➕ + Criar Nova Categoria / Filtro...</option>
+              </select>
+              <div id="custom-category-input-wrap" style="display: none; margin-top: 0.5rem;">
+                <input type="text" id="input-custom-category-name" class="admin-input-field" placeholder="Digite a nova categoria (ex: CREATINAS, BARRINHAS)...">
+              </div>
+            </div>
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label class="admin-input-label">Descrição Breve:</label>
+            <input type="text" id="input-new-prod-desc" class="admin-input-field" placeholder="Suplementação de alta pureza para máximo desempenho.">
+          </div>
+          <div style="margin-bottom: 1.2rem;">
+            <label class="admin-input-label"><i class="fa-solid fa-cookie-bite" style="color: var(--primary-orange);"></i> Sabores Disponíveis para Seleção do Cliente (Separados por Vírgula):</label>
+            <input type="text" id="input-new-prod-flavors" class="admin-input-field" placeholder="Ex: Chocolate Gourmet, Baunilha Pura, Morango Silvestre, Cookies & Cream">
+            <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap; align-items: center;">
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">Preenchimento Rápido:</span>
+              <button type="button" onclick="quickFillFlavors('whey')" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #FFF; font-size: 0.72rem; padding: 0.25rem 0.65rem; border-radius: 12px; cursor: pointer;">🍫 Whey (Choc, Baun, Mor, Cookies)</button>
+              <button type="button" onclick="quickFillFlavors('creatina')" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #FFF; font-size: 0.72rem; padding: 0.25rem 0.65rem; border-radius: 12px; cursor: pointer;">🧪 Creatina (Sem Sabor Pura, Limão, Uva)</button>
+              <button type="button" onclick="quickFillFlavors('pretreino')" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #FFF; font-size: 0.72rem; padding: 0.25rem 0.65rem; border-radius: 12px; cursor: pointer;">⚡ Pré-Treino (Frutas Vermelhas, Melancia, Maçã Verde)</button>
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; align-items: flex-end;">
+            <div style="flex: 1; min-width: 200px;">
+              <label class="admin-input-label">Upload de Imagem Local:</label>
+              <input type="file" id="input-new-prod-file" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+              <label class="admin-input-label">ou URL da Imagem:</label>
+              <input type="text" id="input-new-prod-imgurl" class="admin-input-field" placeholder="https://exemplo.com/imagem.png">
+            </div>
+          </div>
+          <div id="new-prod-img-preview-wrap" style="display: none; margin-bottom: 1rem;">
+            <label class="admin-input-label">Preview da Imagem:</label>
+            <img id="new-prod-img-preview" src="" alt="Preview" style="max-height: 100px; border-radius: 8px; border: 1px solid var(--primary-orange);">
+          </div>
+          <button id="btn-add-new-product" type="button" class="btn-primary" style="background: linear-gradient(135deg, #F58220 0%, #D96F0E 50%, #B45309 100%); color: #FFF; font-family: var(--font-heading); font-size: 0.88rem; font-weight: 800; padding: 0.8rem 1.6rem; border-radius: 12px; border: 1px solid rgba(245, 130, 32, 0.5); box-shadow: 0 4px 18px rgba(245, 130, 32, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25); cursor: pointer; display: inline-flex; align-items: center; gap: 0.6rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; letter-spacing: 0.5px;">
+            <i class="fa-solid fa-plus-circle" style="font-size: 1rem;"></i> Adicionar Produto ao Estoque
+          </button>
+        </div>
+
+        <!-- GERENCIADOR DE CATEGORIAS E FILTROS DA LOJA -->
+        <div style="background: var(--card-bg); border: 1px solid var(--accent-cyan); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
+          <h4 style="font-size: 1.05rem; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-tags" style="color: var(--accent-cyan);"></i> Gerenciador de Categorias & Filtros da Loja
+          </h4>
+          <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.2rem;">Crie novos filtros de categorias para organizar seus suplementos na vitrine principal.</p>
+
+          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.2rem; align-items: center;">
+            <input type="text" id="input-manage-cat-name" class="admin-input-field" placeholder="Nome da Nova Categoria (Ex: EMAGRECIMENTO, BCAA, SHAKERS)..." style="flex: 1; min-width: 240px;">
+            <button type="button" onclick="createNewCategoryFromAdmin()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #0284C7); font-size: 0.85rem; padding: 0.65rem 1.2rem; font-weight: 800;">
+              <i class="fa-solid fa-folder-plus"></i> Criar Nova Categoria & Filtro
+            </button>
+          </div>
+
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem; font-weight: 700; text-transform: uppercase;">Categorias Ativas na Loja:</div>
+          <div id="manage-categories-list" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+
+        <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 1rem;"><i class="fa-solid fa-boxes-stacked" style="color: var(--accent-cyan);"></i> Todos os Produtos Cadastrados</h3>
+        <div class="table-responsive-box">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Marca</th>
+                <th>Categoria (Filtro)</th>
+                <th>Status</th>
+                <th>Ações do Gestor</th>
+              </tr>
+            </thead>
+            <tbody id="manage-products-table-body">
+              <!-- Preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ABA 5: CONFIGURAÇÕES DA LOJA -->
+      <div id="tab-settings" class="admin-tab-content">
+        <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: 20px; max-width: 600px;">
+          <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 1.5rem;"><i class="fa-solid fa-sliders" style="color: var(--accent-cyan);"></i> Configurações da Loja & Oferta do Dia</h3>
+          
+          <!-- Controle de Ativar / Desativar Oferta do Dia -->
+          <div style="background: rgba(10,28,48,0.8); border: 1px solid var(--primary-orange); padding: 1.2rem; border-radius: 14px; margin-bottom: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+              <span style="font-weight: 800; color: #FFF; font-size: 0.95rem;">
+                <i class="fa-solid fa-bolt" style="color: var(--primary-orange);"></i> Oferta do Dia (Barra Superior)
+              </span>
+              <span id="offer-status-badge" class="stock-status-badge status-ok">
+                <i class="fa-solid fa-circle-check"></i> ATIVADA
+              </span>
+            </div>
+            
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+              Ative ou desative o banner de anúncio e o cronômetro da oferta do dia no topo da loja.
+            </p>
+
+            <button id="btn-toggle-offer" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--accent-red), #B91C1C); font-size: 0.88rem; font-weight: 800;">
+              <i class="fa-solid fa-power-off"></i> Desativar Oferta do Dia na Loja
+            </button>
+          </div>
+
+          <div class="admin-input-group">
+            <label class="admin-input-label">Texto do Anúncio Principal:</label>
+            <input type="text" id="input-store-banner" class="admin-input-field" value="SEUS CLIENTES RECEBEM OS SUPLEMENTOS DA SUA LOJA NO MESMO DIA!">
+          </div>
+
+          <div class="admin-input-group">
+            <label class="admin-input-label"><i class="fa-brands fa-whatsapp" style="color: #25D366;"></i> WhatsApp Vendedor Principal (Varela):</label>
+            <input type="text" id="input-store-phone-1" class="admin-input-field" value="+55 81 99247-0607 (Vendedor Varela)">
+          </div>
+
+          <div class="admin-input-group">
+            <label class="admin-input-label"><i class="fa-solid fa-key" style="color: var(--primary-orange);"></i> Chave Pix Vendedor Varela:</label>
+            <input type="text" id="input-store-pix-key" class="admin-input-field" value="81992470607" placeholder="Celular, CPF, E-mail ou Chave Aleatória">
+          </div>
+
+          <div class="admin-input-group" style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px dashed rgba(255,255,255,0.15); margin-top: 0.8rem;">
+            <label class="admin-input-label" style="font-weight: 800; color: #fff;">
+              <i class="fa-solid fa-qrcode" style="color: var(--accent-green);"></i> Cadastrar Imagem do QR Code Pix (Vendedor Varela):
+            </label>
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+              Faça upload do seu próprio QR Code Pix (imagem do banco) ou cole a URL da imagem:
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <input type="file" id="input-store-pix-qr-file" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+              <input type="text" id="input-store-pix-qr-url" class="admin-input-field" placeholder="Ou cole a URL da Imagem do QR Code (http...)">
+            </div>
+
+            <div id="admin-pix-qr-preview-wrap" style="display: none; margin-top: 0.8rem; text-align: center; background: #fff; padding: 10px; border-radius: 12px; position: relative;">
+              <img id="admin-pix-qr-preview" src="" alt="Preview QR Code Pix Vendedor Varela" style="max-width: 160px; max-height: 160px; display: block; margin: auto; border-radius: 6px;">
+              <button id="btn-remove-custom-pix-qr" type="button" style="margin-top: 0.5rem; background: rgba(239, 68, 68, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                <i class="fa-solid fa-trash"></i> Remover QR Code Cadastrado (Usar Dinâmico)
+              </button>
+            </div>
+          </div>
+
+          <div class="admin-input-group" style="background: rgba(16, 185, 129, 0.06); padding: 1.2rem; border-radius: 14px; border: 1px solid rgba(16, 185, 129, 0.3); margin-top: 1.2rem;">
+            <label class="admin-input-label" style="font-weight: 900; color: #10B981; font-size: 0.98rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-cloud-bolt"></i> Banco de Dados em Nuvem Supabase (Sincronização Online Realtime)
+            </label>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">
+              Conecte seu projeto Supabase para sincronizar pedidos, estoque e produtos em tempo real entre celulares e computadores.
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+              <div>
+                <label class="admin-input-label" style="font-size: 0.75rem;">URL do Projeto Supabase (SUPABASE_URL):</label>
+                <input type="text" id="input-supabase-url" class="admin-input-field" value="https://gojwbyqfywmofspnirqk.supabase.co" placeholder="https://gojwbyqfywmofspnirqk.supabase.co">
+              </div>
+              <div>
+                <label class="admin-input-label" style="font-size: 0.75rem;">Chave Pública Anon (SUPABASE_ANON_KEY):</label>
+                <input type="password" id="input-supabase-key" class="admin-input-field" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem; align-items: center;">
+                <button type="button" id="btn-connect-supabase" onclick="saveSupabaseConfig()" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10B981); flex: 1; font-size: 0.85rem; padding: 0.65rem;">
+                  <i class="fa-solid fa-plug"></i> Conectar Banco de Dados Supabase
+                </button>
+                <span id="supabase-status-badge" class="stock-status-badge status-low" style="white-space: nowrap;">
+                  🟡 Local (Desconectado)
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-save-settings" class="btn-primary" style="width: 100%; margin-top: 1rem;">
+            <i class="fa-solid fa-save"></i> Salvar Configurações
+          </button>
+        </div>
+      </div>
+
+      <!-- ABA 6: GERENCIAR COMBOS DA LOJA -->
+      <div id="tab-combos" class="admin-tab-content">
+        <div style="background: rgba(10, 28, 48, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 2rem;">
+          <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-boxes-packing" style="color: var(--primary-orange);"></i> Gerenciar Kits & Combos do Recomendador
+          </h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.8rem;">
+            Edite os títulos, descrições, preços promocionais, descontos, itens inclusos e brindes de cada combo oferecido na loja!
+          </p>
+
+          <div id="admin-combos-forms-container" style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Combo 1: Massa PRO -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 1: Ganho de Massa PRO
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-massa_pro" class="admin-input-field" value="🏆 Combo Super Massa PRO (Vendedor Varela)">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-massa_pro" class="admin-input-field" value="ECONOMIZE R$ 69,80">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-massa_pro" class="admin-input-field" value="319.70">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-massa_pro" class="admin-input-field" value="249.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-massa_pro" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-massa_pro" class="admin-input-field" value="hero_supplements_pedestal.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-massa_pro" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-massa_pro" class="admin-input-field" value="Recomendação de Elite para quem treina de 5 a 7x na semana com foco total em Ganho de Massa Muscular e Hipertrofia!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-massa_pro" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Whey Protein Concentrado 900g | Construção e reparo de tecidos musculares
+1x Creatina Monohidratada 300g | Aumento real de força e volume muscular
+1x Pré-Treino Explosão 300g | Energia brutal e foco mental extremo
+1x Coqueteleira Shaker Simplo (BRINDE) | Misturador profissional grátis</textarea>
+              </div>
+            </div>
+
+            <!-- Combo 2: Hipertrofia Custo-Benefício -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 2: Hipertrofia Custo-Benefício
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-massa_essencial" class="admin-input-field" value="🔥 Combo Hipertrofia Essencial">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-massa_essencial" class="admin-input-field" value="ECONOMIZE R$ 44,90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-massa_essencial" class="admin-input-field" value="229.80">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-massa_essencial" class="admin-input-field" value="184.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-massa_essencial" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-massa_essencial" class="admin-input-field" value="whey_integralmedica.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-massa_essencial" src="whey_integralmedica.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-massa_essencial" class="admin-input-field" value="Indicação perfeita para quem quer acelerar a hipertrofia com o melhor custo-benefício!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-massa_essencial" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Whey Protein Concentrado 900g | Aporte de proteínas diárias de altíssima pureza
+1x Creatina Monohidratada 300g | Síntese de ATP e força contínua
+1x Coqueteleira Shaker Simplo (BRINDE) | Brinde exclusivo da Simplo Suplementos</textarea>
+              </div>
+            </div>
+
+            <!-- Combo 3: Definição & Emagrecimento PRO -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 3: Definição & Emagrecimento PRO
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-definicao_pro" class="admin-input-field" value="⚡ Combo Definição PRO (Vendedor Varela)">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-definicao_pro" class="admin-input-field" value="ECONOMIZE R$ 59,80">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-definicao_pro" class="admin-input-field" value="279.70">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-definicao_pro" class="admin-input-field" value="219.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-definicao_pro" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-definicao_pro" class="admin-input-field" value="pretreino_horus.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-definicao_pro" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-definicao_pro" class="admin-input-field" value="Kit de alta performance para secar gordura mantendo massa magra em treinos diários!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-definicao_pro" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Whey Protein Concentrado 900g | Manutenção da massa magra durante o déficit
+1x Pré-Treino Explosão 300g | Termogênese e queima calórica acelerada
+1x BCAA 2:1:1 200g Pura Nutrição | Proteção muscular de alta intensidade
+1x Coqueteleira Shaker Simplo (BRINDE) | Shaker profissional grátis</textarea>
+              </div>
+            </div>
+
+            <!-- Combo 4: Definição Custo-Benefício -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 4: Definição Custo-Benefício
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-definicao_essencial" class="admin-input-field" value="⚡ Combo Definição & Shape Trincado">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-definicao_essencial" class="admin-input-field" value="ECONOMIZE R$ 34,90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-definicao_essencial" class="admin-input-field" value="154.80">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-definicao_essencial" class="admin-input-field" value="119.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-definicao_essencial" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-definicao_essencial" class="admin-input-field" value="pretreino_horus.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-definicao_essencial" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-definicao_essencial" class="admin-input-field" value="Montado especialmente focado em Queima de Gordura preservando sua Massa Magra com o menor custo!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-definicao_essencial" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Pré-Treino Explosão 300g | Acelera a queima calórica e combate a fadiga
+1x BCAA 2:1:1 200g Pura Nutrição | Anti-catabólico poderoso durante o treino
+1x Protein Bar Chocolate 60g (BRINDE) | Lanche fit proteico para matar a vontade de doce</textarea>
+              </div>
+            </div>
+
+            <!-- Combo 5: Energia & Performance PRO -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 5: Energia & Performance PRO
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-energia_pro" class="admin-input-field" value="🚀 Combo Energia & Explosão Max PRO">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-energia_pro" class="admin-input-field" value="ECONOMIZE R$ 79,80">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-energia_pro" class="admin-input-field" value="319.70">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-energia_pro" class="admin-input-field" value="239.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-energia_pro" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-energia_pro" class="admin-input-field" value="hero_supplements_pedestal.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-energia_pro" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-energia_pro" class="admin-input-field" value="Combinação suprema de energia, pump e foco para treinos de alta carga e rendimento!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-energia_pro" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Whey Protein Concentrado 900g | Reconstrução acelerada de fibras musculares
+1x Pré-Treino Explosão 300g | Foco inabalável e vaso-dilatação extrema
+1x Creatina Monohidratada 300g | ATP e força constante nas séries pesadas
+1x Coqueteleira Shaker Simplo (BRINDE) | Misturador profissional grátis</textarea>
+              </div>
+            </div>
+
+            <!-- Combo 6: Energia & Foco Custo-Benefício -->
+            <div style="background: rgba(8, 19, 33, 0.9); border: 1px solid var(--primary-orange); border-radius: 16px; padding: 1.5rem;">
+              <h4 style="color: var(--primary-orange); font-size: 1.1rem; margin: 0 0 1rem 0; font-weight: 800;">
+                <i class="fa-solid fa-box"></i> Combo 6: Energia & Foco Custo-Benefício
+              </h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Título Comercial do Combo:</label>
+                  <input type="text" id="combo-title-energia_essencial" class="admin-input-field" value="🚀 Combo Energia, Pump & Foco Total">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Etiqueta de Economia:</label>
+                  <input type="text" id="combo-badge-energia_essencial" class="admin-input-field" value="ECONOMIZE R$ 39,90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Original R$ (Sem Desconto):</label>
+                  <input type="number" step="0.01" id="combo-oldprice-energia_essencial" class="admin-input-field" value="179.80">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Preço Promocional do Combo R$:</label>
+                  <input type="number" step="0.01" id="combo-price-energia_essencial" class="admin-input-field" value="139.90">
+                </div>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                <div class="admin-input-group">
+                  <label class="admin-input-label"><i class="fa-solid fa-image" style="color: var(--accent-green);"></i> Upload Imagem do Combo:</label>
+                  <input type="file" id="combo-imgfile-energia_essencial" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+                </div>
+                <div class="admin-input-group">
+                  <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
+                  <input type="text" id="combo-img-energia_essencial" class="admin-input-field" value="pretreino_horus.png">
+                  <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
+                    <img id="combo-img-preview-energia_essencial" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                  </div>
+                </div>
+              </div>
+              <div class="admin-input-group" style="margin-bottom: 1rem;">
+                <label class="admin-input-label">Descrição Explicativa:</label>
+                <input type="text" id="combo-desc-energia_essencial" class="admin-input-field" value="Ideal para transformar seu rendimento nos treinos, eliminando a preguiça!">
+              </div>
+              <div class="admin-input-group">
+                <label class="admin-input-label">Itens Inclusos & Brindes (1 item por linha | formato: Nome | Detalhe):</label>
+                <textarea id="combo-items-energia_essencial" class="admin-input-field" rows="4" style="font-family: monospace; font-size: 0.85rem;">1x Pré-Treino Explosão 300g | Vaso-dilatação e energia de sobra
+1x Creatina Monohidratada 300g | Manutenção da resistência muscular em séries pesadas
+1x Coqueteleira Shaker Simplo (BRINDE) | Misturador prático para levar à academia</textarea>
+              </div>
+            </div>
+          </div>
+
+          <button id="btn-save-admin-combos" type="button" class="btn-primary" style="width: 100%; margin-top: 1.8rem; background: linear-gradient(135deg, var(--accent-green), #059669); font-size: 1rem; font-weight: 800; padding: 0.9rem;">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Alterações dos Combos
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODAL DETALHE DO PRODUTO (TELA 3 DA IMAGEM DE REFERÊNCIA) -->
+  <div id="product-detail-modal" class="cart-drawer-overlay">
+    <div style="background: #081321; border: 1px solid var(--primary-orange); border-radius: 20px; padding: 1.8rem; max-width: 520px; width: 92%; margin: auto; max-height: 90vh; overflow-y: auto; position: relative;">
+      <button id="btn-close-product-detail" class="btn-close-cart" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+
+      <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+        LOJA &gt; <span id="detail-category-tag" style="color: var(--primary-orange); font-weight: 700;">WHEY PROTEIN</span>
+      </div>
+
+      <!-- Imagem Principal Pote de Suplemento -->
+      <div style="text-align: center; margin-bottom: 1.2rem;">
+        <img id="detail-img" src="whey_integralmedica.png" alt="Produto" style="max-height: 240px; width: auto; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));">
+      </div>
+
+      <h2 id="detail-name" style="font-size: 1.25rem; color: #FFF; margin-bottom: 0.4rem;">WHEY PROTEIN CONCENTRADO 900G</h2>
+      
+      <div style="color: var(--gold); font-size: 0.8rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.3rem;">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        <span style="color: var(--text-muted); font-size: 0.75rem;">(128 avaliações)</span>
+      </div>
+
+      <div style="margin-bottom: 1rem;">
+        <span id="detail-price" style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 900; color: #FFF;">R$ 139,90</span>
+        <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">ou 12x de <strong id="detail-installment" style="color: #FFF;">R$ 13,32</strong></span>
+      </div>
+
+      <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+        <span id="detail-stock-status-tag" class="stock-status-badge status-ok" style="font-size: 0.78rem; padding: 0.35rem 0.75rem;">
+          <i class="fa-solid fa-circle-check"></i> Em Estoque (Pronta Entrega)
+        </span>
+        <span class="same-day-badge" style="font-size: 0.75rem; background: rgba(245, 130, 32, 0.15); border: 1px solid var(--primary-orange); color: var(--primary-orange);">
+          <i class="fa-solid fa-bolt"></i> ENTREGA HOJE (Vendedor Varela)
+        </span>
+      </div>
+
+      <!-- Caixa de Descrição Detalhada & Sugestão de Uso -->
+      <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 1.2rem; font-size: 0.83rem;">
+        <div style="color: var(--primary-orange); font-weight: 800; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-file-lines"></i> SOBRE O PRODUTO & BENEFÍCIOS:
+        </div>
+        <p id="detail-desc-text" style="color: #CBD5E1; margin: 0 0 0.6rem 0; line-height: 1.45;">
+          Suplementação premium desenvolvida com altíssimo padrão nutricional para acelerar o ganho de massa magra, aumentar a força nos treinos e melhorar a recuperação física pós-exercício.
+        </p>
+        <div style="color: var(--accent-green); font-weight: 800; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+          <i class="fa-solid fa-prescription-bottle-medical"></i> SUGESTÃO DE USO:
+        </div>
+        <p id="detail-usage-text" style="color: #94A3B8; margin: 0.2rem 0 0 0; line-height: 1.35; font-size: 0.78rem;">
+          Consumir 1 porção ao dia diluída em 200ml de água ou bebida de sua preferência pós-treino ou conforme indicação de médico/nutricionista.
+        </p>
+      </div>
+
+      <div id="detail-flavor-group" class="admin-input-group">
+        <label class="admin-input-label">SABOR:</label>
+        <select id="detail-flavor-select" class="admin-input-field" style="background: #0A1C30;">
+          <option>Sem Sabor / Pura (100% Monohidratada)</option>
+        </select>
+      </div>
+
+      <div class="admin-input-group">
+        <label class="admin-input-label">QUANTIDADE:</label>
+        <div style="display: flex; align-items: center; width: 130px; background: #0A1C30; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; overflow: hidden;">
+          <button id="btn-qty-minus" style="background: transparent; border: none; color: #fff; width: 36px; height: 38px; font-size: 1.1rem; cursor: pointer;">-</button>
+          <span id="detail-qty-val" style="flex: 1; text-align: center; font-weight: 800; color: #fff;">1</span>
+          <button id="btn-qty-plus" style="background: transparent; border: none; color: #fff; width: 36px; height: 38px; font-size: 1.1rem; cursor: pointer;">+</button>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 1.5rem;">
+        <button id="btn-detail-buy-now" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), #D96F0E); font-size: 0.95rem; padding: 0.85rem; font-weight: 900;">
+          COMPRAR AGORA
+        </button>
+
+        <button id="btn-detail-add-cart" class="btn-outline-orange" style="font-size: 0.85rem; padding: 0.75rem; font-weight: 800;">
+          <i class="fa-solid fa-cart-shopping"></i> ADICIONAR AO CARRINHO
+        </button>
+      </div>
+
+      <!-- Tabela de Informações Nutricionais Grid 2x2 (Tela 3) -->
+      <div id="detail-nutrition-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.5rem; background: rgba(10, 28, 48, 0.8); padding: 1rem; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);">
+        <div style="display: flex; gap: 0.6rem; align-items: center;">
+          <i class="fa-solid fa-dumbbell" style="color: var(--primary-orange); font-size: 1.2rem;"></i>
+          <div style="font-size: 0.75rem;"><strong id="nutri-val-1" style="color: #fff; display: block; font-size: 0.9rem;">24g</strong> <span id="nutri-lbl-1">PROTEÍNA por porção</span></div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: center;">
+          <i class="fa-solid fa-bolt" style="color: var(--primary-orange); font-size: 1.2rem;"></i>
+          <div style="font-size: 0.75rem;"><strong id="nutri-val-2" style="color: #fff; display: block; font-size: 0.9rem;">5,4g</strong> <span id="nutri-lbl-2">BCAAs por porção</span></div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: center;">
+          <i class="fa-solid fa-droplet" style="color: var(--primary-orange); font-size: 1.2rem;"></i>
+          <div style="font-size: 0.75rem;"><strong id="nutri-val-3" style="color: #fff; display: block; font-size: 0.9rem;">4g</strong> <span id="nutri-lbl-3">GLUTAMINA por porção</span></div>
+        </div>
+        <div style="display: flex; gap: 0.6rem; align-items: center;">
+          <i class="fa-solid fa-award" style="color: var(--primary-orange); font-size: 1.2rem;"></i>
+          <div style="font-size: 0.75rem;"><strong id="nutri-val-4" style="color: #fff; display: block; font-size: 0.9rem;">100%</strong> <span id="nutri-lbl-4">MATÉRIA-PRIMA importada</span></div>
+        </div>
+      </div>
+
+      <!-- Lista de Selos de Garantia (Tela 3) -->
+      <div style="font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.6rem;">
+        <p><i class="fa-solid fa-shield-halved" style="color: var(--primary-orange);"></i> <strong>COMPRA 100% SEGURA:</strong> Seus dados protegidos.</p>
+        <p><i class="fa-solid fa-truck" style="color: var(--primary-orange);"></i> <strong>ENTREGA PARA TODO BRASIL:</strong> Frete rápido e seguro.</p>
+        <p><i class="fa-solid fa-credit-card" style="color: var(--primary-orange);"></i> <strong>PAGAMENTO FACILITADO:</strong> Parcele em até 12x.</p>
+        <p><i class="fa-solid fa-rotate-left" style="color: var(--primary-orange);"></i> <strong>TROCA FÁCIL:</strong> Garantia de satisfação.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GAVETA FLUTUANTE DO CARRINHO (CART DRAWER OVERLAY) -->
+  <div id="cart-overlay" class="cart-drawer-overlay">
+    <div class="cart-drawer-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.2rem; color: #fff; margin: 0;"><i class="fa-solid fa-cart-shopping" style="color: var(--primary-orange);"></i> Seu Carrinho</h3>
+        <button id="btn-close-cart" class="btn-close-cart">&times;</button>
+      </div>
+
+      <div id="cart-items-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding-right: 0.4rem;">
+        <!-- Preenchido via JS -->
+      </div>
+
+      <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.2rem; margin-top: 1rem;">
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <input type="text" id="input-cart-coupon" class="admin-input-field" placeholder="Possui cupom? (Ex: SIMPLO10)" style="padding: 0.6rem; font-size: 0.82rem;">
+          <button id="btn-apply-cart-coupon" class="btn-primary" style="font-size: 0.8rem; padding: 0.6rem 1rem;">Aplicar</button>
+        </div>
+
+        <div id="applied-coupon-row" style="display: none; justify-content: space-between; font-size: 0.85rem; color: var(--accent-green); margin-bottom: 0.6rem;">
+          <span>Cupom (<span id="active-coupon-code"></span>):</span>
+          <span id="coupon-discount-val">- R$ 0,00</span>
+        </div>
+
+        <div style="margin-bottom: 0.8rem; font-size: 0.82rem; color: var(--accent-green); text-align: center; font-weight: 700; background: rgba(16, 185, 129, 0.15); padding: 0.4rem; border-radius: 8px;">
+          <i class="fa-solid fa-truck"></i> Pedido enviado ao Vendedor Varela com solicitação de Entrega no Mesmo Dia!
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 900; color: #fff; margin-bottom: 1.2rem;">
+          <span>Total:</span>
+          <span id="cart-total-val" style="color: var(--accent-green);">R$ 0,00</span>
+        </div>
+
+        <button id="btn-open-checkout-modal" class="btn-checkout-whatsapp">
+          <i class="fa-brands fa-whatsapp"></i> Finalizar & Enviar Pedido para Vendedor Varela
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHECKOUT DE ENTREGA & PAGAMENTO -->
+  <div id="checkout-modal-overlay" class="cart-drawer-overlay">
+    <div style="background: #081321; border: 1px solid var(--primary-orange); border-radius: 20px; padding: 2rem; max-width: 480px; width: 90%; margin: auto; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(16px); box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative;">
+      <button id="btn-close-checkout-modal" class="btn-close-cart" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+      
+      <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 0.4rem;"><i class="fa-solid fa-truck" style="color: var(--primary-orange);"></i> Dados de Entrega & Pagamento</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">Preencha seus dados para envio imediato dos suplementos!</p>
+
+      <div class="admin-input-group">
+        <label class="admin-input-label">Seu Nome Completo:</label>
+        <input type="text" id="checkout-client-name" class="admin-input-field" placeholder="Ex: João da Silva">
+      </div>
+
+      <div class="admin-input-group">
+        <label class="admin-input-label">Seu WhatsApp (com DDD):</label>
+        <input type="tel" id="checkout-client-phone" class="admin-input-field" placeholder="Ex: (81) 98877-6655">
+      </div>
+
+      <div class="admin-input-group">
+        <label class="admin-input-label">Endereço Completo de Entrega:</label>
+        <input type="text" id="checkout-client-address" class="admin-input-field" placeholder="Rua, Nº, Bairro, Ponto de Referência">
+      </div>
+
+      <div class="admin-input-group">
+        <label class="admin-input-label">Forma de Pagamento Preferida:</label>
+        <select id="checkout-client-payment" class="admin-input-field" style="cursor: pointer; background: #0A1C30;">
+          <option value="⚡ PIX (Chave Pix na Entrega)">⚡ PIX (Pagamento Instantâneo com QR Code)</option>
+          <option value="💳 Cartão de Crédito / Débito (Maquininha)">💳 Cartão de Crédito / Débito na Maquininha</option>
+          <option value="💵 Dinheiro (Troco na Entrega)">💵 Dinheiro (Troco)</option>
+        </select>
+      </div>
+
+      <!-- CONTAINER PIX DINÂMICO VENDEDOR VARELA -->
+      <div id="pix-payment-box" class="pix-payment-box" style="margin-top: 1.2rem; background: rgba(16, 185, 129, 0.08); border: 1px solid var(--accent-green); border-radius: 16px; padding: 1.2rem; text-align: center; transition: all 0.3s ease;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: var(--accent-green); font-weight: 800; font-size: 0.95rem; margin-bottom: 0.8rem;">
+          <i class="fa-solid fa-qrcode" style="font-size: 1.2rem;"></i>
+          <span>Pagamento Pix Instantâneo • Vendedor Varela</span>
+        </div>
+
+        <div style="background: #fff; padding: 10px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 15px rgba(0,0,0,0.4); margin-bottom: 0.8rem;">
+          <img id="pix-qr-image" src="" alt="QR Code Pix Vendedor Varela" style="width: 180px; height: 180px; display: block; border-radius: 4px;">
+        </div>
+
+        <div style="margin-bottom: 0.8rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Valor Total a Pagar:</span>
+          <span id="pix-total-amount" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-green);">R$ 0,00</span>
+          <div style="margin-top: 0.3rem;">
+            <span style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid #10B981; padding: 0.25rem 0.6rem; border-radius: 8px; font-weight: 800; font-size: 0.75rem; display: inline-block;">
+              <i class="fa-solid fa-bolt"></i> Valor preenchido automaticamente no app do seu banco!
+            </span>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.3); padding: 0.6rem; border-radius: 8px; font-size: 0.8rem; color: #E2E8F0; margin-bottom: 0.8rem; border: 1px dashed rgba(255,255,255,0.2); word-break: break-all;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.2rem;">Chave Pix Vendedor Varela:</div>
+          <strong id="pix-key-display" style="color: #fff; font-size: 0.85rem;">81992470607</strong>
+        </div>
+
+        <button id="btn-copy-pix-code" type="button" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--accent-green), #059669); font-size: 0.85rem; font-weight: 700; padding: 0.6rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+          <i class="fa-regular fa-copy"></i> Copiar Pix Copia e Cola
+        </button>
+      </div>
+
+      <button id="btn-confirm-checkout" class="btn-checkout-whatsapp" style="margin-top: 1.2rem;">
+        <i class="fa-brands fa-whatsapp"></i> Confirmar & Enviar Pedido para Vendedor Varela
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL EXTRATO DE MOVIMENTAÇÃO DIÁRIA (GESTOR) -->
+  <div id="daily-movement-modal" class="cart-drawer-overlay">
+    <div style="background: #081321; border: 1px solid var(--primary-orange); border-radius: 20px; padding: 2rem; max-width: 720px; width: 92%; margin: auto; max-height: 90vh; overflow-y: auto; position: relative;">
+      <button id="btn-close-movement-modal" class="btn-close-cart" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+      <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">
+        <i class="fa-solid fa-chart-pie" style="color: var(--primary-orange);"></i> Extrato de Movimentação Diária
+      </h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Entradas (reposição) e Saídas (vendas) registradas hoje no estoque.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Entradas (Hoje)</span>
+          <div id="mov-kpi-in" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-green);">0 un.</div>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Saídas (Vendas)</span>
+          <div id="mov-kpi-out" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-red);">0 un.</div>
+        </div>
+        <div style="background: rgba(0, 229, 255, 0.1); border: 1px solid var(--accent-cyan); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700;">Faturamento</span>
+          <div id="mov-kpi-rev" style="font-size: 1.4rem; font-weight: 800; color: var(--accent-cyan);">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="table-responsive-box" style="margin-bottom: 1.5rem;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Horário</th>
+              <th>Tipo</th>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Detalhe / Origem</th>
+            </tr>
+          </thead>
+          <tbody id="movement-table-body">
+            <!-- Preenchido via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+        <button id="btn-send-movement-whatsapp" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #25D366, #128C7E);">
+          <i class="fa-brands fa-whatsapp"></i> Enviar Relatório via WhatsApp
+        </button>
+        <button id="btn-copy-movement-report" class="btn-outline-orange" style="flex: 1;">
+          <i class="fa-solid fa-copy"></i> Copiar Relatório
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL RELATÓRIO GERAL DE PEDIDOS DO DIA (GESTOR) -->
+  <div id="orders-report-modal" class="cart-drawer-overlay">
+    <div style="background: #081321; border: 1px solid var(--accent-green); border-radius: 20px; padding: 2rem; max-width: 820px; width: 92%; margin: auto; max-height: 90vh; overflow-y: auto; position: relative; backdrop-filter: blur(16px); box-shadow: 0 25px 60px rgba(0,0,0,0.85);">
+      <button id="btn-close-orders-report-modal" class="btn-close-cart" onclick="closeOrdersReportModal()" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+      
+      <h3 style="font-size: 1.3rem; color: #fff; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fa-solid fa-chart-line" style="color: var(--accent-green);"></i> Relatório Consolidado de Pedidos & Vendas do Dia
+      </h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Resumo executivo de faturamento, aprovações e lista completa de pedidos recebidos hoje.</p>
+
+      <!-- KPIs do Relatório de Pedidos -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800;">Total de Pedidos</span>
+          <div id="ord-rep-kpi-count" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-green);">0</div>
+        </div>
+        <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid #2563EB; padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800;">Faturamento Total</span>
+          <div id="ord-rep-kpi-revenue" style="font-size: 1.4rem; font-weight: 900; color: #60A5FA;">R$ 0,00</div>
+        </div>
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent-yellow); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800;">Em Andamento</span>
+          <div id="ord-rep-kpi-approved" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-yellow);">0</div>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid var(--accent-red); padding: 1rem; border-radius: 12px; text-align: center;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800;">Cancelados</span>
+          <div id="ord-rep-kpi-rejected" style="font-size: 1.4rem; font-weight: 900; color: var(--accent-red);">0</div>
+        </div>
+      </div>
+
+      <div class="table-responsive-box" style="margin-bottom: 1.5rem;">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Cliente</th>
+              <th>Telefone</th>
+              <th>Pagamento</th>
+              <th>Itens do Pedido</th>
+              <th>Total (R$)</th>
+              <th>Situação</th>
+            </tr>
+          </thead>
+          <tbody id="orders-report-table-body">
+            <!-- Preenchido via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+        <button type="button" onclick="sendOrdersWhatsAppReport()" class="btn-primary" style="flex: 1; background: linear-gradient(135deg, #25D366, #128C7E); font-size: 0.88rem; padding: 0.75rem; font-weight: 800; border-radius: 10px;">
+          <i class="fa-brands fa-whatsapp"></i> Enviar Relatório via WhatsApp (Vendedor Varela)
+        </button>
+        <button type="button" onclick="copyOrdersReportText()" class="btn-outline-orange" style="flex: 1; font-size: 0.88rem; padding: 0.75rem; font-weight: 800; border-radius: 10px;">
+          <i class="fa-solid fa-copy"></i> Copiar Relatório Formatado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL GERADOR DE RECIBO EM PDF (GESTOR) -->
+  <div id="pdf-receipt-modal" class="cart-drawer-overlay">
+    <div style="background: #FFFFFF; color: #0F172A; border-radius: 16px; padding: 2rem; max-width: 680px; width: 92%; margin: auto; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+      <button id="btn-close-pdf-modal" class="btn-close-cart" style="position: absolute; top: 15px; right: 20px; color: #0F172A;">&times;</button>
+      <div id="pdf-receipt-content">
+        <!-- Preenchido via JS -->
+      </div>
+      <div style="display: flex; gap: 0.8rem; margin-top: 1.5rem; justify-content: flex-end;">
+        <button id="btn-print-pdf-now" class="btn-outline-orange" style="border-color: #0F172A; color: #0F172A;">
+          <i class="fa-solid fa-print"></i> Imprimir
+        </button>
+        <button id="btn-download-pdf-now" class="btn-primary" style="background: linear-gradient(135deg, var(--primary-orange), #D96F0E);">
+          <i class="fa-solid fa-file-pdf"></i> Baixar Recibo PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (EXATAMENTE COMO NA TELA 3 DA IMAGEM) -->
+  <footer id="contato">
+    <div class="container">
+      <div class="footer-center-content">
+        <a href="#" class="brand-logo-wrap footer-logo-center">
+          <img src="Simplo.png" alt="Simplo Suplementos" class="footer-brand-logo">
+        </a>
+        
+        <p class="footer-bio">Sua melhor versão começa aqui!</p>
+        
+        <div class="footer-social-links center-socials">
+          <a href="#" class="footer-social-icon"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://wa.me/5581992470607" target="_blank" class="footer-social-icon"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" class="footer-social-icon"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+
+        <ul class="footer-simple-links">
+          <li><a href="#demo-store">INÍCIO</a></li>
+          <li><a href="#loja">PRODUTOS</a></li>
+          <li><a href="#categorias">CATEGORIAS</a></li>
+          <li><a href="#beneficios">BENEFÍCIOS</a></li>
+          <li><a href="#qualidade">DEPOIMENTOS</a></li>
+          <li><a href="#contato">CONTATO</a></li>
+        </ul>
+
+        <div class="footer-bottom-bar">
+          <p>&copy; 2026 Simplo Suplementos. Todos os direitos reservados. <span class="btn-open-admin-trigger" style="cursor:pointer; opacity: 0.3; margin-left: 8px; font-size: 0.75rem;" title="Área do Gestor">🔒</span></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- MODAL AUTENTICAÇÃO DO GESTOR DA LOJA (LOGIN COM USUÁRIO E SENHA) -->
+  <div id="admin-auth-modal" class="cart-drawer-overlay">
+    <div style="background: #081321; border: 1px solid var(--accent-green); border-radius: 24px; padding: 2.2rem; max-width: 440px; width: 92%; margin: auto; text-align: center; position: relative; box-shadow: 0 25px 60px rgba(0,0,0,0.85); backdrop-filter: blur(16px);">
+      <button id="btn-close-admin-auth" class="btn-close-cart" style="position: absolute; top: 15px; right: 20px;">&times;</button>
+      
+      <div style="width: 65px; height: 65px; background: rgba(16, 185, 129, 0.15); border: 1px solid var(--accent-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 1.8rem; color: var(--accent-green);">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      
+      <h3 style="color: #fff; font-size: 1.4rem; margin-bottom: 0.4rem; font-weight: 900;">Acesso Restrito ao Gestor</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Informe seu <strong>Usuário</strong> e <strong>Senha</strong> de gestor para acessar o painel administrativo da Simplo Suplementos.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; text-align: left;">
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 800; color: #fff; display: block; margin-bottom: 0.4rem;">
+            <i class="fa-solid fa-user" style="color: var(--accent-green);"></i> Usuário do Gestor:
+          </label>
+          <input type="text" id="input-admin-username" class="admin-input-field" placeholder="Digite o usuário..." style="font-size: 1rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.8rem; font-weight: 800; color: #fff; display: block; margin-bottom: 0.4rem;">
+            <i class="fa-solid fa-key" style="color: var(--accent-green);"></i> Senha de Acesso:
+          </label>
+          <input type="password" id="input-admin-password" class="admin-input-field" placeholder="Digite a senha..." style="font-size: 1rem;">
+        </div>
+      </div>
+
+      <button id="btn-submit-admin-auth" type="button" class="btn-primary" style="width: 100%; background: linear-gradient(135deg, var(--accent-green), #059669); font-weight: 800; font-size: 1rem; padding: 0.9rem;">
+        <i class="fa-solid fa-right-to-bracket"></i> Entrar no Painel do Gestor
+      </button>
+    </div>
+  </div>
+
+  <!-- Script Principal com Invalidação de Cache -->
+  <script src="script.js?v=3.6.0"></script>
+</body>
+</html>
