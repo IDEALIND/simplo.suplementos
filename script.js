@@ -1,11 +1,13 @@
 // ==========================================================================
 // SIMPLO SUPLEMENTOS - INTERACTIVE PROPOSAL & LIVE DEMO LOGIC
 // VENDEDOR VARELA: VENDEDOR DA LOJA SIMPLO SUPLEMENTOS (+55 81 9247-0607)
-// SENHA DO GESTOR DA LOJA: Sp889260.
+// LOGIN ADMIN: ADMIN / SENHA ADMIN: ADMIN
 // ==========================================================================
 
 let adminAuthorized = false;
-sessionStorage.removeItem('simplo_gestor_logged');
+if (sessionStorage.getItem('simplo_gestor_logged') === 'true') {
+  adminAuthorized = true;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   loadCategoriesFromStorage();
@@ -188,7 +190,7 @@ window.activateAdminDashboardView = function activateAdminDashboardView(tabId) {
     if (typeof renderAdminCombosTab === 'function') {
       renderAdminCombosTab();
     }
-    
+
     if (tabId) {
       const tabBtn = document.querySelector(`.admin-subnav-btn[data-tab="${tabId}"]`);
       if (tabBtn) tabBtn.click();
@@ -234,15 +236,28 @@ function initAdminAuthModal() {
       return;
     }
 
-    if (userVal.toUpperCase() === 'ADMSIMPLO' && pwdVal === 'Sp889260.') {
+    // Suporta LOGIN ADMIN e SENHA ADMIN (maiúsculo ou minúsculo) e credencial legada
+    const isAdminUser = userVal.toUpperCase() === 'ADMIN';
+    const isAdminPwd = pwdVal.toUpperCase() === 'ADMIN';
+    const isLegacyAuth = (userVal.toUpperCase() === 'ADMSIMPLO' && pwdVal === 'Sp889260.');
+
+    if ((isAdminUser && isAdminPwd) || isLegacyAuth) {
       adminAuthorized = true;
+      sessionStorage.setItem('simplo_gestor_logged', 'true');
       if (authModal) authModal.classList.remove('open');
-      if (userInput) userInput.value = '';
-      if (passwordInput) passwordInput.value = '';
+      if (userInput) {
+        userInput.value = '';
+        userInput.style.borderColor = '';
+      }
+      if (passwordInput) {
+        passwordInput.value = '';
+        passwordInput.style.borderColor = '';
+      }
       activateAdminDashboardView();
-      showToast(`🔓 Acesso concedido! Bem-vindo(a), Gestor(a) ADMSIMPLO.`);
+      const adminDisplayName = isAdminUser ? 'ADMIN' : 'ADMSIMPLO';
+      showToast(`🔓 Acesso concedido! Bem-vindo(a), Gestor(a) ${adminDisplayName}.`);
     } else {
-      showToast('❌ Usuário ou senha incorretos!');
+      showToast('❌ Usuário ou senha incorretos! Utilize Usuário ADMIN e Senha ADMIN.');
       if (userInput) userInput.style.borderColor = 'var(--accent-red)';
       if (passwordInput) passwordInput.style.borderColor = 'var(--accent-red)';
     }
@@ -313,7 +328,7 @@ function initProductFilter() {
       const productsGrid = document.querySelector('.products-grid-5cols');
       if (!productsGrid) return;
       const cards = Array.from(productsGrid.querySelectorAll('.product-card'));
-      
+
       cards.sort((a, b) => {
         const priceA = parsePrice(a.querySelector('.current-price').textContent);
         const priceB = parsePrice(b.querySelector('.current-price').textContent);
@@ -321,14 +336,14 @@ function initProductFilter() {
         if (val === 'price-desc') return priceB - priceA;
         return 0;
       });
-      
+
       cards.forEach(card => productsGrid.appendChild(card));
       showToast('🔄 Produtos reordenados!');
     });
   }
 }
 
-window.filterByCategory = function(cat) {
+window.filterByCategory = function (cat) {
   const filterBtns = document.querySelectorAll('.filter-btn');
   const productCards = document.querySelectorAll('.product-card');
   const lojaSection = document.getElementById('loja');
@@ -443,7 +458,7 @@ function addToCart(id, name, price, imgSrc) {
 
   renderCart();
   showToast(`🛒 "${name}" adicionado ao carrinho da loja!`);
-  
+
   const trigger = document.getElementById('cart-trigger');
   if (trigger) {
     trigger.style.transform = 'scale(1.2)';
@@ -535,7 +550,7 @@ function renderCart() {
   `).join('');
 }
 
-window.updateQty = function(id, delta) {
+window.updateQty = function (id, delta) {
   const item = cart.find(i => i.id === id);
   if (!item) return;
 
@@ -661,7 +676,7 @@ function generatePixPayload(pixKey, merchantName, merchantCity, amount, txid = '
   const merchantAccount = emv('26', gui + keyField);
   const amountStr = amount > 0 ? amount.toFixed(2) : '';
 
-  let payload = 
+  let payload =
     emv('00', '01') +
     merchantAccount +
     emv('52', '0000') +
@@ -851,11 +866,16 @@ function confirmRealOrderCheckout() {
       stockItem.stock = Math.max(0, stockItem.stock - item.qty);
       stockItem.sales += item.qty;
       stockItem.status = stockItem.stock === 0 ? 'danger' : (stockItem.stock <= 10 ? 'low' : 'ok');
-      
+
       // Registrar Saída
       addStockMovement('SAÍDA', stockItem.name, item.qty, `Venda Pedido ${newOrderId} (${clientName})`);
+      syncStockToSupabase(stockItem.id, stockItem.stock, stockItem.isPaused);
     }
   });
+
+  // Sincronizar Novo Pedido no Supabase Cloud
+  const newOrderObj = ordersData[0];
+  if (newOrderObj) syncOrderToSupabase(newOrderObj);
 
   // Atualizar uso de cupom
   if (appliedCoupon) {
@@ -1174,7 +1194,7 @@ function renderAdminTable(filter = 'all') {
   }).join('');
 }
 
-window.saveProductStock = function(id) {
+window.saveProductStock = function (id) {
   const input = document.getElementById(`stock-input-${id}`);
   const val = input ? input.value : null;
   const item = stockData.find(i => i.id === id);
@@ -1188,7 +1208,7 @@ window.saveProductStock = function(id) {
   showToast(`💾 Estoque de "${item.name}" salvo com sucesso (${item.stock} un.)!`);
 };
 
-window.saveAllStockChanges = function() {
+window.saveAllStockChanges = function () {
   stockData.forEach(item => {
     const input = document.getElementById(`stock-input-${item.id}`);
     if (input) {
@@ -1201,6 +1221,9 @@ window.saveAllStockChanges = function() {
   });
 
   saveStockToLocalStorage();
+  stockData.forEach(item => {
+    syncStockToSupabase(item.id, item.stock, item.isPaused);
+  });
   renderAdminTable('all');
   updateAdminKpis();
   updateStoreStockBadges();
@@ -1225,7 +1248,7 @@ function saveStockToLocalStorage() {
         }
       });
       localStorage.setItem('simplo_custom_products', JSON.stringify(list));
-    } catch (e) {}
+    } catch (e) { }
   }
 }
 
@@ -1241,7 +1264,7 @@ function saveCouponsToLocalStorage() {
   localStorage.setItem('simplo_coupons_data', JSON.stringify(couponsData));
 }
 
-window.updateProductStock = function(id, val) {
+window.updateProductStock = function (id, val) {
   const item = stockData.find(i => i.id === id);
   if (!item) return;
 
@@ -1267,6 +1290,7 @@ window.updateProductStock = function(id, val) {
   }
 
   saveStockToLocalStorage();
+  syncStockToSupabase(item.id, item.stock, item.isPaused);
   recalculateProductRanks();
   renderAdminTable('all');
   updateAdminKpis();
@@ -1360,7 +1384,7 @@ function renderOrdersTable() {
   }).join('');
 }
 
-window.openOrdersReportModal = function() {
+window.openOrdersReportModal = function () {
   const modal = document.getElementById('orders-report-modal');
   if (modal) {
     renderOrdersReportTable();
@@ -1368,12 +1392,12 @@ window.openOrdersReportModal = function() {
   }
 };
 
-window.closeOrdersReportModal = function() {
+window.closeOrdersReportModal = function () {
   const modal = document.getElementById('orders-report-modal');
   if (modal) modal.classList.remove('open');
 };
 
-window.renderOrdersReportTable = function() {
+window.renderOrdersReportTable = function () {
   const tableBody = document.getElementById('orders-report-table-body');
   const countEl = document.getElementById('ord-rep-kpi-count');
   const revEl = document.getElementById('ord-rep-kpi-revenue');
@@ -1422,7 +1446,7 @@ window.renderOrdersReportTable = function() {
   }).join('');
 };
 
-window.sendOrdersWhatsAppReport = function() {
+window.sendOrdersWhatsAppReport = function () {
   const text = generateOrdersReportText();
   const rawKey = getSellerPixKey();
   const digits = rawKey.replace(/\D/g, '') || '5581992470607';
@@ -1431,7 +1455,7 @@ window.sendOrdersWhatsAppReport = function() {
   window.open(url, '_blank');
 };
 
-window.copyOrdersReportText = function() {
+window.copyOrdersReportText = function () {
   const text = generateOrdersReportText();
   navigator.clipboard.writeText(text).then(() => {
     showToast('📋 Relatório de Pedidos copiado com sucesso!');
@@ -1470,7 +1494,7 @@ function generateOrdersReportText() {
     msg += `Nenhum pedido registrado hoje.\n`;
   } else {
     ordersData.forEach((o, i) => {
-      msg += `*${i+1}. Pedido ${o.id}*\n`;
+      msg += `*${i + 1}. Pedido ${o.id}*\n`;
       msg += `👤 *Cliente:* ${o.client}\n`;
       msg += `📱 *WhatsApp:* ${o.phone || 'Não informado'}\n`;
       msg += `💳 *Pagamento:* ${o.payment}\n`;
@@ -1484,7 +1508,7 @@ function generateOrdersReportText() {
   return msg;
 }
 
-window.changeOrderStatus = function(orderId, newStatus) {
+window.changeOrderStatus = function (orderId, newStatus) {
   const order = ordersData.find(o => o.id === orderId);
   if (!order) return;
 
@@ -1500,12 +1524,13 @@ window.changeOrderStatus = function(orderId, newStatus) {
     order.class = 'order-transit';
   }
 
+  syncOrderToSupabase(order);
   renderOrdersTable();
   updateAdminKpis();
   showToast(`⚡ Status do pedido ${orderId} alterado para: "${newStatus}"!`);
 };
 
-window.approveOrder = function(orderId) {
+window.approveOrder = function (orderId) {
   const order = ordersData.find(o => o.id === orderId);
   if (!order) return;
 
@@ -1513,12 +1538,13 @@ window.approveOrder = function(orderId) {
   order.status = "🟡 Em Andamento";
   order.class = "order-delivered";
 
+  syncOrderToSupabase(order);
   renderOrdersTable();
   updateAdminKpis();
   showToast(`✅ Pedido ${orderId} de ${order.client} foi APROVADO!`);
 };
 
-window.rejectOrder = function(orderId) {
+window.rejectOrder = function (orderId) {
   const order = ordersData.find(o => o.id === orderId);
   if (!order) return;
 
@@ -1527,12 +1553,13 @@ window.rejectOrder = function(orderId) {
   order.class = "status-danger";
 
   saveOrdersToLocalStorage();
+  syncOrderToSupabase(order);
   renderOrdersTable();
   updateAdminKpis();
   showToast(`❌ Pedido ${orderId} de ${order.client} foi REPROVADO!`);
 };
 
-window.notifyOrderWhatsApp = function(phone, clientName, status, orderId) {
+window.notifyOrderWhatsApp = function (phone, clientName, status, orderId) {
   const text = `Olá ${clientName}! Atualização do seu pedido ${orderId} na Simplo Suplementos: O status atual do seu pedido é: *${status}*. Qualquer dúvida fale conosco!`;
   const encoded = encodeURIComponent(text);
   window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank');
@@ -1550,16 +1577,16 @@ function renderCouponsTable() {
       <td style="color: var(--text-muted);">${c.uses}</td>
       <td><span class="stock-status-badge status-ok">${c.status}</span></td>
       <td>
-        ${c.status === 'Ativo' ? 
-          `<button class="btn-admin-action btn-admin-reject" title="Pausar cupom" onclick="toggleCoupon('${c.code}')"><i class="fa-solid fa-pause"></i> Pausar</button>` :
-          `<button class="btn-admin-action btn-admin-approve" title="Ativar cupom" onclick="toggleCoupon('${c.code}')"><i class="fa-solid fa-play"></i> Ativar</button>`
-        }
+        ${c.status === 'Ativo' ?
+      `<button class="btn-admin-action btn-admin-reject" title="Pausar cupom" onclick="toggleCoupon('${c.code}')"><i class="fa-solid fa-pause"></i> Pausar</button>` :
+      `<button class="btn-admin-action btn-admin-approve" title="Ativar cupom" onclick="toggleCoupon('${c.code}')"><i class="fa-solid fa-play"></i> Ativar</button>`
+    }
       </td>
     </tr>
   `).join('');
 }
 
-window.toggleCoupon = function(code) {
+window.toggleCoupon = function (code) {
   const coupon = couponsData.find(c => c.code === code);
   if (!coupon) return;
 
@@ -1650,12 +1677,12 @@ function updateAdminKpis() {
   const kpiOrders = document.getElementById('kpi-orders');
   const kpiTicket = document.getElementById('kpi-ticket');
   const kpiStockAlert = document.getElementById('kpi-stock-alert');
-  
+
   const kpiRevenueTag = document.getElementById('kpi-revenue-tag');
   const kpiOrdersTag = document.getElementById('kpi-orders-tag');
   const kpiTicketTag = document.getElementById('kpi-ticket-tag');
   const kpiStockAlertTag = document.getElementById('kpi-stock-alert-tag');
-  
+
   const ordersCountSpan = document.getElementById('admin-orders-count');
 
   const activeOrders = ordersData.filter(o => o.approvalState !== 'rejected' && !o.status.includes('Reprovado'));
@@ -1679,7 +1706,7 @@ function updateAdminKpis() {
 
   if (kpiRevenueTag) kpiRevenueTag.textContent = count > 0 ? `Calculado via ${count} pedido(s)` : `0% em relação a ontem`;
   if (kpiOrdersTag) kpiOrdersTag.textContent = `${count} Entregas no Mesmo Dia`;
-  
+
   const topProduct = [...stockData].sort((a, b) => b.sales - a.sales)[0];
   if (kpiTicketTag) {
     kpiTicketTag.textContent = topProduct && topProduct.sales > 0 ? `${topProduct.name.split(' ')[0]} lidera vendas` : `Nenhum pedido realizado`;
@@ -1851,107 +1878,221 @@ function initNewProductForm() {
 }
 
 /* --------------------------------------------------------------------------
-   GERENCIADOR DE CATEGORIAS E FILTROS DINÂMICOS DA LOJA
+   GERENCIADOR DE CATEGORIAS E FILTROS DINÂMICOS DA LOJA (IMAGENS EDITÁVEIS)
    -------------------------------------------------------------------------- */
-let defaultCategories = [
-  { id: 'hipertrofia', name: '🔥 Hipertrofia & Ganho', isCustom: false },
-  { id: 'performance', name: '⚡ Pré-Treino & Energia', isCustom: false },
-  { id: 'saude', name: '🛡️ Força & Saúde', isCustom: false }
+let defaultStoreCategories = [
+  { id: 'cat_whey', name: 'WHEY PROTEIN', imgSrc: 'whey_integralmedica.png', filterId: 'hipertrofia', isCustom: false },
+  { id: 'cat_pretreino', name: 'PRÉ-TREINO', imgSrc: 'pretreino_horus.png', filterId: 'performance', isCustom: false },
+  { id: 'cat_creatina', name: 'CREATINA', imgSrc: 'creatina_integralmedica.png', filterId: 'saude', isCustom: false },
+  { id: 'cat_bcaa', name: 'BCAA', imgSrc: 'hero_supplements_pedestal.png', filterId: 'saude', isCustom: false },
+  { id: 'cat_acessorios', name: 'ACESSÓRIOS', imgSrc: 'shaker_bottle.png', filterId: 'all', isCustom: false },
+  { id: 'cat_barras', name: 'BARRAS E SNACKS', imgSrc: 'protein_bar.png', filterId: 'hipertrofia', isCustom: false }
 ];
 
-let customCategories = [];
+let storeCategories = [...defaultStoreCategories];
 
 function loadCategoriesFromStorage() {
-  const saved = localStorage.getItem('simplo_custom_categories');
+  const saved = localStorage.getItem('simplo_store_categories');
   if (saved) {
-    try { customCategories = JSON.parse(saved); } catch (e) {}
+    try {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        storeCategories = parsed;
+      }
+    } catch (e) { }
   }
 }
 
 function saveCategoriesToStorage() {
-  localStorage.setItem('simplo_custom_categories', JSON.stringify(customCategories));
+  localStorage.setItem('simplo_store_categories', JSON.stringify(storeCategories));
+  if (typeof syncCategoriesToSupabase === 'function') syncCategoriesToSupabase();
 }
 
 function getAllCategories() {
-  return [...defaultCategories, ...customCategories];
+  return storeCategories;
 }
 
-window.handleNewProductCategoryChange = function(val) {
-  const customWrap = document.getElementById('custom-category-input-wrap');
-  if (customWrap) {
-    if (val === '__new__') customWrap.style.display = 'block';
-    else customWrap.style.display = 'none';
-  }
+window.renderHomepageCategories = function renderHomepageCategories() {
+  const container = document.getElementById('homepage-categories-grid');
+  if (!container) return;
+
+  container.innerHTML = storeCategories.map(cat => `
+    <a href="#loja" class="category-card" onclick="filterByCategory('${cat.filterId || 'all'}')">
+      <div class="category-img-wrap">
+        <img src="${cat.imgSrc}" alt="${cat.name}" class="category-img">
+      </div>
+      <span class="category-name">${cat.name} <i class="fa-solid fa-chevron-right"></i></span>
+    </a>
+  `).join('');
 };
 
-window.createNewCategoryFromAdmin = function(customNameInputVal) {
-  const nameInput = document.getElementById('input-manage-cat-name');
-  const catName = typeof customNameInputVal === 'string' && customNameInputVal.trim() ? customNameInputVal.trim() : (nameInput ? nameInput.value.trim() : '');
-  
-  if (!catName) {
-    showToast('⚠️ Digite o nome da nova categoria!');
-    return null;
+window.renderCategoryControls = function renderCategoryControls() {
+  const gridEl = document.getElementById('manage-categories-grid');
+  if (gridEl) {
+    gridEl.innerHTML = storeCategories.map(cat => `
+      <div style="background: rgba(8, 19, 33, 0.95); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 1rem; display: flex; flex-direction: column; align-items: center; position: relative; transition: all 0.3s ease;">
+        
+        <div style="width: 100%; height: 110px; background: rgba(0, 0, 0, 0.35); border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 0.5rem; margin-bottom: 0.8rem; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; position: relative;">
+          <img src="${cat.imgSrc}" alt="${cat.name}" id="cat-img-preview-${cat.id}" style="max-width: 100%; max-height: 100%; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+        </div>
+
+        <div style="font-weight: 900; color: #FFF; font-size: 0.9rem; margin-bottom: 0.2rem; text-align: center; text-transform: uppercase; letter-spacing: 0.5px;">
+          ${cat.name}
+        </div>
+        
+        <span style="font-size: 0.72rem; color: var(--accent-cyan); background: rgba(2, 132, 199, 0.15); padding: 0.2rem 0.6rem; border-radius: 10px; margin-bottom: 0.8rem; font-weight: 700;">
+          Filtro: ${cat.filterId || 'geral'}
+        </span>
+
+        <!-- Botões de Ação da Imagem e Categoria -->
+        <div style="display: flex; flex-direction: column; gap: 0.4rem; width: 100%;">
+          <input type="file" id="cat-file-input-${cat.id}" accept="image/*" style="display: none;" onchange="handleCategoryImageUpload('${cat.id}', event)">
+          
+          <button type="button" onclick="triggerCategoryImageUpload('${cat.id}')" class="btn-primary" style="background: linear-gradient(135deg, #F58220, #D96F0E); font-size: 0.78rem; padding: 0.45rem; width: 100%; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; cursor: pointer;">
+            <i class="fa-solid fa-camera"></i> Alterar Imagem
+          </button>
+
+          <div style="display: flex; gap: 0.4rem;">
+            <button type="button" onclick="editCategoryDetails('${cat.id}')" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #FFF; font-size: 0.75rem; padding: 0.4rem; flex: 1; border-radius: 8px; cursor: pointer; font-weight: 700;" title="Editar Nome ou URL">
+              <i class="fa-solid fa-pen"></i> Editar
+            </button>
+            <button type="button" onclick="deleteCategory('${cat.id}')" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #EF4444; font-size: 0.75rem; padding: 0.4rem; border-radius: 8px; cursor: pointer; font-weight: 700;" title="Excluir Categoria">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
   }
 
-  const slug = catName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '_');
-  
-  const existing = getAllCategories().find(c => c.id === slug || c.name.toLowerCase().includes(catName.toLowerCase()));
-  if (existing) {
-    if (nameInput) nameInput.value = '';
-    return existing.id;
+  // Atualizar Select no formulário de Cadastro de Produto
+  const catSelect = document.getElementById('input-new-prod-category');
+  if (catSelect) {
+    const currentVal = catSelect.value;
+    catSelect.innerHTML = storeCategories.map(c =>
+      `<option value="${c.filterId || c.id}">${c.name}</option>`
+    ).join('') + `<option value="__new__">➕ + Criar Nova Categoria / Filtro...</option>`;
+    if (currentVal && currentVal !== '__new__') catSelect.value = currentVal;
   }
 
-  const newCat = {
-    id: slug,
-    name: `✨ ${catName.toUpperCase()}`,
-    isCustom: true
+  renderHomepageCategories();
+  renderStoreCategoryFilterTabs();
+  if (typeof renderManageProductsTable === 'function') renderManageProductsTable();
+};
+
+window.triggerCategoryImageUpload = function (catId) {
+  const fileInput = document.getElementById(`cat-file-input-${catId}`);
+  if (fileInput) fileInput.click();
+};
+
+window.handleCategoryImageUpload = function (catId, event) {
+  const file = event.target && event.target.files ? event.target.files[0] : null;
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const newImgSrc = e.target.result;
+    const cat = storeCategories.find(c => c.id === catId);
+    if (cat) {
+      cat.imgSrc = newImgSrc;
+      saveCategoriesToStorage();
+      renderCategoryControls();
+      showToast(`📸 Imagem da categoria "${cat.name}" alterada com sucesso!`);
+    }
   };
-
-  customCategories.push(newCat);
-  saveCategoriesToStorage();
-  
-  if (nameInput) nameInput.value = '';
-  
-  renderCategoryControls();
-  showToast(`🏷️ Nova categoria "${catName}" criada com sucesso!`);
-  return slug;
+  reader.readAsDataURL(file);
 };
 
-window.deleteCategory = function(catId) {
-  customCategories = customCategories.filter(c => c.id !== catId);
+window.editCategoryDetails = function (catId) {
+  const cat = storeCategories.find(c => c.id === catId);
+  if (!cat) return;
+
+  const newName = prompt(`Digite o novo nome para a categoria "${cat.name}":`, cat.name);
+  if (newName === null) return;
+
+  const newUrl = prompt(`Deseja alterar a URL da imagem da categoria? (Deixe em branco para manter a atual):`, '');
+
+  if (newName.trim()) cat.name = newName.trim().toUpperCase();
+  if (newUrl && newUrl.trim()) cat.imgSrc = newUrl.trim();
+
+  saveCategoriesToStorage();
+  renderCategoryControls();
+  showToast(`✏️ Categoria "${cat.name}" atualizada!`);
+};
+
+window.addNewStoreCategoryWithImage = function () {
+  const titleInput = document.getElementById('input-new-cat-title');
+  const filterSelect = document.getElementById('input-new-cat-filter-id');
+  const fileInput = document.getElementById('input-new-cat-image-file');
+  const urlInput = document.getElementById('input-new-cat-image-url');
+
+  const title = titleInput ? titleInput.value.trim() : '';
+  if (!title) {
+    showToast('⚠️ Digite o nome da nova categoria!');
+    if (titleInput) titleInput.focus();
+    return;
+  }
+
+  const filterId = filterSelect ? filterSelect.value : 'all';
+  const slug = 'cat_' + title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '_');
+
+  let imgSrc = 'whey_integralmedica.png';
+
+  if (urlInput && urlInput.value.trim()) {
+    imgSrc = urlInput.value.trim();
+  }
+
+  const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+  function finalizeCategoryCreation(imageSource) {
+    const newCat = {
+      id: slug + '_' + Date.now(),
+      name: title.toUpperCase(),
+      imgSrc: imageSource,
+      filterId: filterId,
+      isCustom: true
+    };
+    storeCategories.push(newCat);
+    saveCategoriesToStorage();
+    renderCategoryControls();
+
+    if (titleInput) titleInput.value = '';
+    if (urlInput) urlInput.value = '';
+    if (fileInput) fileInput.value = '';
+
+    showToast(`✨ Nova categoria "${title}" criada com sucesso!`);
+  }
+
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      finalizeCategoryCreation(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    finalizeCategoryCreation(imgSrc);
+  }
+};
+
+window.deleteCategory = function (catId) {
+  const cat = storeCategories.find(c => c.id === catId);
+  const catName = cat ? cat.name : 'categoria';
+  if (!confirm(`Deseja realmente remover a categoria "${catName}" da loja?`)) return;
+
+  storeCategories = storeCategories.filter(c => c.id !== catId);
   saveCategoriesToStorage();
   renderCategoryControls();
   showToast('🗑️ Categoria removida da loja!');
 };
 
-function renderCategoryControls() {
-  const allCats = getAllCategories();
-
-  // 1. Atualizar Select no formulário de Cadastro de Produto
-  const catSelect = document.getElementById('input-new-prod-category');
-  if (catSelect) {
-    const currentVal = catSelect.value;
-    catSelect.innerHTML = allCats.map(c => 
-      `<option value="${c.id}">${c.name}</option>`
-    ).join('') + `<option value="__new__">➕ + Criar Nova Categoria / Filtro...</option>`;
-    if (currentVal && currentVal !== '__new__') catSelect.value = currentVal;
+window.resetCategoriesToDefault = function () {
+  if (confirm('Deseja realmente restaurar as 6 categorias e fotos originais da loja?')) {
+    storeCategories = JSON.parse(JSON.stringify(defaultStoreCategories));
+    saveCategoriesToStorage();
+    renderCategoryControls();
+    showToast('🔄 Categorias e fotos padrão restauradas com sucesso!');
   }
-
-  // 2. Atualizar Lista do Gerenciador de Categorias em ABA 4
-  const listEl = document.getElementById('manage-categories-list');
-  if (listEl) {
-    listEl.innerHTML = allCats.map(c => `
-      <div style="background: rgba(10, 28, 48, 0.9); border: 1px solid rgba(255,255,255,0.15); padding: 0.4rem 0.85rem; border-radius: 20px; font-size: 0.82rem; color: #FFF; display: flex; align-items: center; gap: 0.5rem;">
-        <span style="font-weight:700;">${c.name}</span>
-        ${c.isCustom ? `<button type="button" onclick="deleteCategory('${c.id}')" style="background:transparent; border:none; color:var(--accent-red); cursor:pointer; font-size:0.8rem; padding:0 2px;" title="Remover Categoria"><i class="fa-solid fa-trash-can"></i></button>` : '<span style="font-size:0.7rem; color:var(--text-muted);">(Padrão)</span>'}
-      </div>
-    `).join('');
-  }
-
-  // 3. Atualizar Botões de Filtro na Loja e Tabela
-  renderStoreCategoryFilterTabs();
-  renderManageProductsTable();
-}
+};
 
 function renderStoreCategoryFilterTabs() {
   const filterTabsContainer = document.querySelector('.filter-tabs');
@@ -1962,16 +2103,27 @@ function renderStoreCategoryFilterTabs() {
 
   let html = `<button class="filter-btn ${activeFilter === 'all' ? 'active' : ''}" data-filter="all">Todos os Produtos</button>`;
 
-  getAllCategories().forEach(c => {
-    const isActive = activeFilter === c.id ? 'active' : '';
-    html += `<button class="filter-btn ${isActive}" data-filter="${c.id}">${c.name}</button>`;
+  const uniqueFilters = [];
+  storeCategories.forEach(c => {
+    const fid = c.filterId || 'all';
+    if (!uniqueFilters.includes(fid)) uniqueFilters.push(fid);
+  });
+
+  uniqueFilters.forEach(fid => {
+    let filterLabel = fid.toUpperCase();
+    if (fid === 'hipertrofia') filterLabel = '🔥 Hipertrofia & Ganho';
+    else if (fid === 'performance') filterLabel = '⚡ Pré-Treino & Energia';
+    else if (fid === 'saude') filterLabel = '🛡️ Força & Saúde';
+
+    const isActive = activeFilter === fid ? 'active' : '';
+    html += `<button class="filter-btn ${isActive}" data-filter="${fid}">${filterLabel}</button>`;
   });
 
   filterTabsContainer.innerHTML = html;
   initProductFilter();
 }
 
-window.changeProductCategory = function(productId, newCategory) {
+window.changeProductCategory = function (productId, newCategory) {
   const item = stockData.find(s => s.id === productId);
   if (item) item.category = newCategory;
 
@@ -1987,12 +2139,12 @@ window.changeProductCategory = function(productId, newCategory) {
         target.category = newCategory;
         localStorage.setItem('simplo_custom_products', JSON.stringify(list));
       }
-    } catch (e) {}
+    } catch (e) { }
   }
   showToast(`🏷️ Categoria do produto alterada com sucesso!`);
 };
 
-window.quickFillFlavors = function(type) {
+window.quickFillFlavors = function (type) {
   const input = document.getElementById('input-new-prod-flavors');
   if (!input) return;
   if (type === 'whey') input.value = 'Chocolate Gourmet, Baunilha Pura, Morango Silvestre, Cookies & Cream';
@@ -2181,7 +2333,7 @@ function renderManageProductsTable() {
 
   tbody.innerHTML = stockData.map(p => {
     const currentCat = p.category || 'hipertrofia';
-    const catOptionsHtml = allCats.map(c => 
+    const catOptionsHtml = allCats.map(c =>
       `<option value="${c.id}" ${currentCat === c.id ? 'selected' : ''}>${c.name}</option>`
     ).join('');
 
@@ -2195,16 +2347,16 @@ function renderManageProductsTable() {
           </select>
         </td>
         <td>
-          ${p.isPaused ? 
-            `<span class="stock-status-badge status-danger"><i class="fa-solid fa-pause-circle"></i> Pausado</span>` : 
-            `<span class="stock-status-badge status-ok"><i class="fa-solid fa-circle-check"></i> Ativo</span>`
-          }
+          ${p.isPaused ?
+        `<span class="stock-status-badge status-danger"><i class="fa-solid fa-pause-circle"></i> Pausado</span>` :
+        `<span class="stock-status-badge status-ok"><i class="fa-solid fa-circle-check"></i> Ativo</span>`
+      }
         </td>
         <td style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-          ${p.isPaused ? 
-            `<button class="btn-admin-action btn-admin-approve" title="Ativar produto na loja" onclick="togglePauseProduct('${p.id}')"><i class="fa-solid fa-play"></i> Ativar</button>` : 
-            `<button class="btn-admin-action btn-admin-reject" title="Pausar produto temporariamente" onclick="togglePauseProduct('${p.id}')"><i class="fa-solid fa-pause"></i> Pausar</button>`
-          }
+          ${p.isPaused ?
+        `<button class="btn-admin-action btn-admin-approve" title="Ativar produto na loja" onclick="togglePauseProduct('${p.id}')"><i class="fa-solid fa-play"></i> Ativar</button>` :
+        `<button class="btn-admin-action btn-admin-reject" title="Pausar produto temporariamente" onclick="togglePauseProduct('${p.id}')"><i class="fa-solid fa-pause"></i> Pausar</button>`
+      }
           <button class="btn-admin-action btn-admin-reset" title="Remover produto da loja definitivamente" onclick="deleteProductFromStore('${p.id}')"><i class="fa-solid fa-trash-can"></i> Remover</button>
         </td>
       </tr>
@@ -2212,7 +2364,7 @@ function renderManageProductsTable() {
   }).join('');
 }
 
-window.togglePauseProduct = function(id) {
+window.togglePauseProduct = function (id) {
   const item = stockData.find(s => s.id === id);
   if (!item) return;
 
@@ -2227,7 +2379,7 @@ window.togglePauseProduct = function(id) {
         target.isPaused = item.isPaused;
         localStorage.setItem('simplo_custom_products', JSON.stringify(list));
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const card = document.querySelector(`.product-card[data-id="${id}"]`);
@@ -2241,6 +2393,7 @@ window.togglePauseProduct = function(id) {
 
   renderManageProductsTable();
   renderAdminTable('all');
+  syncStockToSupabase(item.id, item.stock, item.isPaused);
 
   if (item.isPaused) {
     showToast(`⏸️ Produto "${item.name}" foi PAUSADO na loja.`);
@@ -2249,7 +2402,7 @@ window.togglePauseProduct = function(id) {
   }
 };
 
-window.deleteProductFromStore = function(id) {
+window.deleteProductFromStore = function (id) {
   const item = stockData.find(s => s.id === id);
   if (!item) return;
 
@@ -2264,8 +2417,10 @@ window.deleteProductFromStore = function(id) {
     try {
       const list = JSON.parse(saved).filter(p => p.id !== id);
       localStorage.setItem('simplo_custom_products', JSON.stringify(list));
-    } catch (e) {}
+    } catch (e) { }
   }
+
+  deleteProductFromSupabase(id);
 
   const card = document.querySelector(`.product-card[data-id="${id}"]`);
   if (card) card.remove();
@@ -2291,22 +2446,22 @@ function loadCustomProductsFromStorage() {
           if (typeof map[s.id].isPaused === 'boolean') s.isPaused = map[s.id].isPaused;
         }
       });
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const savedOrders = localStorage.getItem('simplo_orders_data');
   if (savedOrders) {
-    try { ordersData = JSON.parse(savedOrders); } catch (e) {}
+    try { ordersData = JSON.parse(savedOrders); } catch (e) { }
   }
 
   const savedMovements = localStorage.getItem('simplo_stock_movements');
   if (savedMovements) {
-    try { stockMovements = JSON.parse(savedMovements); } catch (e) {}
+    try { stockMovements = JSON.parse(savedMovements); } catch (e) { }
   }
 
   const savedCoupons = localStorage.getItem('simplo_coupons_data');
   if (savedCoupons) {
-    try { couponsData = JSON.parse(savedCoupons); } catch (e) {}
+    try { couponsData = JSON.parse(savedCoupons); } catch (e) { }
   }
 
   const saved = localStorage.getItem('simplo_custom_products');
@@ -2378,7 +2533,7 @@ function loadCustomProductsFromStorage() {
 
 let currentReceiptOrderId = '';
 
-window.generateOrderPdfReceipt = function(orderId) {
+window.generateOrderPdfReceipt = function (orderId) {
   const o = ordersData.find(ord => ord.id === orderId);
   if (!o) return;
 
@@ -2562,174 +2717,174 @@ function initProductDetailHandlers() {
   }
 }
 
-window.openProductDetail = function(productId) {
-    currentProductId = productId;
-    const productDetailModal = document.getElementById('product-detail-modal');
-    const detailQtyVal = document.getElementById('detail-qty-val');
-    const detailImg = document.getElementById('detail-img');
-    const detailName = document.getElementById('detail-name');
-    const detailPrice = document.getElementById('detail-price');
-    const detailInstallment = document.getElementById('detail-installment');
-    const flavorSelect = document.getElementById('detail-flavor-select');
-    const categoryTag = document.getElementById('detail-category-tag');
-    const stockStatusTag = document.getElementById('detail-stock-status-tag');
-    const descTextEl = document.getElementById('detail-desc-text');
-    const usageTextEl = document.getElementById('detail-usage-text');
+window.openProductDetail = function (productId) {
+  currentProductId = productId;
+  const productDetailModal = document.getElementById('product-detail-modal');
+  const detailQtyVal = document.getElementById('detail-qty-val');
+  const detailImg = document.getElementById('detail-img');
+  const detailName = document.getElementById('detail-name');
+  const detailPrice = document.getElementById('detail-price');
+  const detailInstallment = document.getElementById('detail-installment');
+  const flavorSelect = document.getElementById('detail-flavor-select');
+  const categoryTag = document.getElementById('detail-category-tag');
+  const stockStatusTag = document.getElementById('detail-stock-status-tag');
+  const descTextEl = document.getElementById('detail-desc-text');
+  const usageTextEl = document.getElementById('detail-usage-text');
 
-    const nutriVal1 = document.getElementById('nutri-val-1');
-    const nutriLbl1 = document.getElementById('nutri-lbl-1');
-    const nutriVal2 = document.getElementById('nutri-val-2');
-    const nutriLbl2 = document.getElementById('nutri-lbl-2');
-    const nutriVal3 = document.getElementById('nutri-val-3');
-    const nutriLbl3 = document.getElementById('nutri-lbl-3');
-    const nutriVal4 = document.getElementById('nutri-val-4');
-    const nutriLbl4 = document.getElementById('nutri-lbl-4');
+  const nutriVal1 = document.getElementById('nutri-val-1');
+  const nutriLbl1 = document.getElementById('nutri-lbl-1');
+  const nutriVal2 = document.getElementById('nutri-val-2');
+  const nutriLbl2 = document.getElementById('nutri-lbl-2');
+  const nutriVal3 = document.getElementById('nutri-val-3');
+  const nutriLbl3 = document.getElementById('nutri-lbl-3');
+  const nutriVal4 = document.getElementById('nutri-val-4');
+  const nutriLbl4 = document.getElementById('nutri-lbl-4');
 
-    const stockItem = stockData.find(s => s.id === productId);
-    const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+  const stockItem = stockData.find(s => s.id === productId);
+  const card = document.querySelector(`.product-card[data-id="${productId}"]`);
 
-    let nameText = stockItem ? stockItem.name : (card ? card.querySelector('.product-name').textContent : 'Suplemento');
-    let priceText = card ? card.querySelector('.current-price').textContent : (stockItem ? `R$ ${stockItem.price.toFixed(2).replace('.', ',')}` : 'R$ 99,90');
-    let imgSrc = card ? card.querySelector('.product-img').getAttribute('src') : 'whey_integralmedica.png';
-    let brandText = stockItem ? stockItem.brand : 'Simplo';
-    let customDesc = stockItem && stockItem.desc ? stockItem.desc : '';
+  let nameText = stockItem ? stockItem.name : (card ? card.querySelector('.product-name').textContent : 'Suplemento');
+  let priceText = card ? card.querySelector('.current-price').textContent : (stockItem ? `R$ ${stockItem.price.toFixed(2).replace('.', ',')}` : 'R$ 99,90');
+  let imgSrc = card ? card.querySelector('.product-img').getAttribute('src') : 'whey_integralmedica.png';
+  let brandText = stockItem ? stockItem.brand : 'Simplo';
+  let customDesc = stockItem && stockItem.desc ? stockItem.desc : '';
 
-    if (detailImg) detailImg.setAttribute('src', imgSrc);
-    if (detailName) detailName.textContent = nameText.toUpperCase();
-    if (detailPrice) detailPrice.textContent = priceText;
+  if (detailImg) detailImg.setAttribute('src', imgSrc);
+  if (detailName) detailName.textContent = nameText.toUpperCase();
+  if (detailPrice) detailPrice.textContent = priceText;
 
-    const priceNum = parsePrice(priceText);
-    const instVal = (priceNum / 12).toFixed(2).replace('.', ',');
-    if (detailInstallment) detailInstallment.textContent = `R$ ${instVal}`;
+  const priceNum = parsePrice(priceText);
+  const instVal = (priceNum / 12).toFixed(2).replace('.', ',');
+  if (detailInstallment) detailInstallment.textContent = `R$ ${instVal}`;
 
-    // Atualizar Status de Estoque
-    if (stockStatusTag) {
-      const stockQty = stockItem ? stockItem.stock : 25;
-      const isPaused = stockItem ? stockItem.isPaused : false;
+  // Atualizar Status de Estoque
+  if (stockStatusTag) {
+    const stockQty = stockItem ? stockItem.stock : 25;
+    const isPaused = stockItem ? stockItem.isPaused : false;
 
-      if (isPaused) {
-        stockStatusTag.className = 'stock-status-badge status-danger';
-        stockStatusTag.innerHTML = '<i class="fa-solid fa-pause-circle"></i> Temporariamente Pausado';
-      } else if (stockQty === 0) {
-        stockStatusTag.className = 'stock-status-badge status-danger';
-        stockStatusTag.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Sem Estoque no Momento';
-      } else {
-        stockStatusTag.className = 'stock-status-badge status-ok';
-        stockStatusTag.innerHTML = '<i class="fa-solid fa-circle-check"></i> Em Estoque (Pronta Entrega)';
-      }
-    }
-
-    const lowerName = nameText.toLowerCase();
-    const isCreatine = productId === 'p3' || lowerName.includes('creatina');
-    const isPreTreino = productId === 'p2' || lowerName.includes('pré-treino') || lowerName.includes('pre-treino') || lowerName.includes('horus');
-    const isBcaa = productId === 'p4' || lowerName.includes('bcaa');
-    const isBar = productId === 'p5' || lowerName.includes('bar') || lowerName.includes('barra');
-
-    if (categoryTag) {
-      const catName = isCreatine ? 'CREATINA MONOHIDRATADA' : (isPreTreino ? 'PRÉ-TREINO EXPLOSÃO' : (isBcaa ? 'BCAA AMINOÁCIDOS' : (isBar ? 'BARRINHA PROTEICA' : 'WHEY PROTEIN')));
-      categoryTag.textContent = `${brandText.toUpperCase()} > ${catName}`;
-    }
-
-    if (descTextEl) {
-      if (customDesc) {
-        descTextEl.textContent = customDesc;
-      } else if (isCreatine) {
-        descTextEl.textContent = 'Creatina Monohidratada 100% Pura de altíssima micronização. Auxilia no aumento da força muscular, ressíntese de ATP e ganho de volume muscular com hidratação celular superior.';
-      } else if (isPreTreino) {
-        descTextEl.textContent = 'Fórmula ultra concentrada para máxima vasodilatação, foco psíquico extremo e resistência muscular intensa. Combina Cafeína Anidra, Beta-Alanina e Taurina de alta absorção.';
-      } else if (isBcaa) {
-        descTextEl.textContent = 'Aminoácidos de Cadeia Ramificada (L-Leucina, L-Isoleucina e L-Valina) na proporção 2:1:1. Combate o catabolismo muscular e acelera a regeneração das fibras pós-treino.';
-      } else if (isBar) {
-        descTextEl.textContent = 'Barra proteica deliciosa sabor Chocolate Gourmet com recheio cremoso. Fonte de proteína de rápida praticidade para lanches intermediários e pré ou pós-treino.';
-      } else {
-        descTextEl.textContent = 'Whey Protein de altíssimo valor biológico enriquecido com aminoácidos essenciais. Garante síntese proteica acelerada, hipertrofia muscular constante e rápida digestibilidade.';
-      }
-    }
-
-    if (usageTextEl) {
-      if (isCreatine) {
-        usageTextEl.textContent = 'Diluir 3g (1 dosador) em 200ml de água ou suco. Consumir diariamente, mesmo em dias sem treino, para saturação muscular constante.';
-      } else if (isPreTreino) {
-        usageTextEl.textContent = 'Consumir 1 dose (5g) em 200ml de água fria cerca de 20 a 30 minutos antes do treino. Não exceder a recomendação diária.';
-      } else if (isBcaa) {
-        usageTextEl.textContent = 'Consumir 5g a 10g antes ou imediatamente após o treino diluído em água fria para interromper o catabolismo.';
-      } else if (isBar) {
-        usageTextEl.textContent = 'Consumir 1 a 2 barras ao dia nos intervalos das refeições ou como opção prática de pós-treino proteico.';
-      } else {
-        usageTextEl.textContent = 'Diluir 30g (1 scoop) em 200ml de água fria ou leite desnatado pós-treino ou no café da manhã.';
-      }
-    }
-
-    if (flavorSelect) {
-      const customFlavors = stockItem && stockItem.flavors ? stockItem.flavors : '';
-      if (customFlavors.trim()) {
-        const list = customFlavors.split(',').map(f => f.trim()).filter(Boolean);
-        flavorSelect.innerHTML = list.map(f => `<option value="${f}">${f}</option>`).join('');
-      } else if (isCreatine) {
-        flavorSelect.innerHTML = '<option>Sem Sabor / Pura (100% Monohidratada)</option><option>Uva Iced</option><option>Limão Taiti</option>';
-      } else if (isPreTreino) {
-        flavorSelect.innerHTML = '<option>Citrus Intense</option><option>Maçã Verde Explosão</option><option>Melancia Freeze</option>';
-      } else if (isBcaa) {
-        flavorSelect.innerHTML = '<option>Limão Refrescante</option><option>Uva Iced</option><option>Sem Sabor / Puro</option>';
-      } else if (isBar) {
-        flavorSelect.innerHTML = '<option>Chocolate Gourmet</option><option>Cookies & Cream</option><option>Peanut Butter</option>';
-      } else {
-        flavorSelect.innerHTML = '<option>Chocolate Gourmet</option><option>Baunilha Pura</option><option>Morango Silvestre</option><option>Cookies & Cream</option>';
-      }
-    }
-
-    if (isCreatine) {
-      if (nutriVal1) nutriVal1.textContent = '100%';
-      if (nutriLbl1) nutriLbl1.textContent = 'PUREZA MONOHIDRATADA';
-      if (nutriVal2) nutriVal2.textContent = '3.000mg';
-      if (nutriLbl2) nutriLbl2.textContent = 'CREATINA por porção';
-      if (nutriVal3) nutriVal3.textContent = '0g';
-      if (nutriLbl3) nutriLbl3.textContent = 'AÇÚCAR e zero glúten';
-      if (nutriVal4) nutriVal4.textContent = '100%';
-      if (nutriLbl4) nutriLbl4.textContent = 'MATÉRIA-PRIMA importada';
-    } else if (isPreTreino) {
-      if (nutriVal1) nutriVal1.textContent = '200mg';
-      if (nutriLbl1) nutriLbl1.textContent = 'CAFEÍNA anidra';
-      if (nutriVal2) nutriVal2.textContent = '2.000mg';
-      if (nutriLbl2) nutriLbl2.textContent = 'BETA-ALANINA pura';
-      if (nutriVal3) nutriVal3.textContent = '1.000mg';
-      if (nutriLbl3) nutriLbl3.textContent = 'TAURINA por porção';
-      if (nutriVal4) nutriVal4.textContent = '100%';
-      if (nutriLbl4) nutriLbl4.textContent = 'FOCO & EXPLOSÃO';
-    } else if (isBcaa) {
-      if (nutriVal1) nutriVal1.textContent = '5g';
-      if (nutriLbl1) nutriLbl1.textContent = 'AMINOÁCIDOS 2:1:1';
-      if (nutriVal2) nutriVal2.textContent = '2.500mg';
-      if (nutriLbl2) nutriLbl2.textContent = 'L-LEUCINA isolada';
-      if (nutriVal3) nutriVal3.textContent = '0g';
-      if (nutriLbl3) nutriLbl3.textContent = 'CARBOIDRATOS / Açúcar';
-      if (nutriVal4) nutriVal4.textContent = '100%';
-      if (nutriLbl4) nutriLbl4.textContent = 'ANTI-CATABÓLICO';
-    } else if (isBar) {
-      if (nutriVal1) nutriVal1.textContent = '16g';
-      if (nutriLbl1) nutriLbl1.textContent = 'PROTEÍNA por barra';
-      if (nutriVal2) nutriVal2.textContent = '3g';
-      if (nutriLbl2) nutriLbl2.textContent = 'FIBRAS ALIMENTARES';
-      if (nutriVal3) nutriVal3.textContent = '0g';
-      if (nutriLbl3) nutriLbl3.textContent = 'AÇÚCAR ADICIONADO';
-      if (nutriVal4) nutriVal4.textContent = '100%';
-      if (nutriLbl4) nutriLbl4.textContent = 'PRATICIDADE PROTEICA';
+    if (isPaused) {
+      stockStatusTag.className = 'stock-status-badge status-danger';
+      stockStatusTag.innerHTML = '<i class="fa-solid fa-pause-circle"></i> Temporariamente Pausado';
+    } else if (stockQty === 0) {
+      stockStatusTag.className = 'stock-status-badge status-danger';
+      stockStatusTag.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Sem Estoque no Momento';
     } else {
-      if (nutriVal1) nutriVal1.textContent = '24g';
-      if (nutriLbl1) nutriLbl1.textContent = 'PROTEÍNA por porção';
-      if (nutriVal2) nutriVal2.textContent = '5,4g';
-      if (nutriLbl2) nutriLbl2.textContent = 'BCAAs por porção';
-      if (nutriVal3) nutriVal3.textContent = '4g';
-      if (nutriLbl3) nutriLbl3.textContent = 'GLUTAMINA por porção';
-      if (nutriVal4) nutriVal4.textContent = '100%';
-      if (nutriLbl4) nutriLbl4.textContent = 'MATÉRIA-PRIMA importada';
+      stockStatusTag.className = 'stock-status-badge status-ok';
+      stockStatusTag.innerHTML = '<i class="fa-solid fa-circle-check"></i> Em Estoque (Pronta Entrega)';
     }
+  }
 
-    detailQty = 1;
-    if (detailQtyVal) detailQtyVal.textContent = 1;
+  const lowerName = nameText.toLowerCase();
+  const isCreatine = productId === 'p3' || lowerName.includes('creatina');
+  const isPreTreino = productId === 'p2' || lowerName.includes('pré-treino') || lowerName.includes('pre-treino') || lowerName.includes('horus');
+  const isBcaa = productId === 'p4' || lowerName.includes('bcaa');
+  const isBar = productId === 'p5' || lowerName.includes('bar') || lowerName.includes('barra');
 
-    if (productDetailModal) productDetailModal.classList.add('open');
-  };
+  if (categoryTag) {
+    const catName = isCreatine ? 'CREATINA MONOHIDRATADA' : (isPreTreino ? 'PRÉ-TREINO EXPLOSÃO' : (isBcaa ? 'BCAA AMINOÁCIDOS' : (isBar ? 'BARRINHA PROTEICA' : 'WHEY PROTEIN')));
+    categoryTag.textContent = `${brandText.toUpperCase()} > ${catName}`;
+  }
+
+  if (descTextEl) {
+    if (customDesc) {
+      descTextEl.textContent = customDesc;
+    } else if (isCreatine) {
+      descTextEl.textContent = 'Creatina Monohidratada 100% Pura de altíssima micronização. Auxilia no aumento da força muscular, ressíntese de ATP e ganho de volume muscular com hidratação celular superior.';
+    } else if (isPreTreino) {
+      descTextEl.textContent = 'Fórmula ultra concentrada para máxima vasodilatação, foco psíquico extremo e resistência muscular intensa. Combina Cafeína Anidra, Beta-Alanina e Taurina de alta absorção.';
+    } else if (isBcaa) {
+      descTextEl.textContent = 'Aminoácidos de Cadeia Ramificada (L-Leucina, L-Isoleucina e L-Valina) na proporção 2:1:1. Combate o catabolismo muscular e acelera a regeneração das fibras pós-treino.';
+    } else if (isBar) {
+      descTextEl.textContent = 'Barra proteica deliciosa sabor Chocolate Gourmet com recheio cremoso. Fonte de proteína de rápida praticidade para lanches intermediários e pré ou pós-treino.';
+    } else {
+      descTextEl.textContent = 'Whey Protein de altíssimo valor biológico enriquecido com aminoácidos essenciais. Garante síntese proteica acelerada, hipertrofia muscular constante e rápida digestibilidade.';
+    }
+  }
+
+  if (usageTextEl) {
+    if (isCreatine) {
+      usageTextEl.textContent = 'Diluir 3g (1 dosador) em 200ml de água ou suco. Consumir diariamente, mesmo em dias sem treino, para saturação muscular constante.';
+    } else if (isPreTreino) {
+      usageTextEl.textContent = 'Consumir 1 dose (5g) em 200ml de água fria cerca de 20 a 30 minutos antes do treino. Não exceder a recomendação diária.';
+    } else if (isBcaa) {
+      usageTextEl.textContent = 'Consumir 5g a 10g antes ou imediatamente após o treino diluído em água fria para interromper o catabolismo.';
+    } else if (isBar) {
+      usageTextEl.textContent = 'Consumir 1 a 2 barras ao dia nos intervalos das refeições ou como opção prática de pós-treino proteico.';
+    } else {
+      usageTextEl.textContent = 'Diluir 30g (1 scoop) em 200ml de água fria ou leite desnatado pós-treino ou no café da manhã.';
+    }
+  }
+
+  if (flavorSelect) {
+    const customFlavors = stockItem && stockItem.flavors ? stockItem.flavors : '';
+    if (customFlavors.trim()) {
+      const list = customFlavors.split(',').map(f => f.trim()).filter(Boolean);
+      flavorSelect.innerHTML = list.map(f => `<option value="${f}">${f}</option>`).join('');
+    } else if (isCreatine) {
+      flavorSelect.innerHTML = '<option>Sem Sabor / Pura (100% Monohidratada)</option><option>Uva Iced</option><option>Limão Taiti</option>';
+    } else if (isPreTreino) {
+      flavorSelect.innerHTML = '<option>Citrus Intense</option><option>Maçã Verde Explosão</option><option>Melancia Freeze</option>';
+    } else if (isBcaa) {
+      flavorSelect.innerHTML = '<option>Limão Refrescante</option><option>Uva Iced</option><option>Sem Sabor / Puro</option>';
+    } else if (isBar) {
+      flavorSelect.innerHTML = '<option>Chocolate Gourmet</option><option>Cookies & Cream</option><option>Peanut Butter</option>';
+    } else {
+      flavorSelect.innerHTML = '<option>Chocolate Gourmet</option><option>Baunilha Pura</option><option>Morango Silvestre</option><option>Cookies & Cream</option>';
+    }
+  }
+
+  if (isCreatine) {
+    if (nutriVal1) nutriVal1.textContent = '100%';
+    if (nutriLbl1) nutriLbl1.textContent = 'PUREZA MONOHIDRATADA';
+    if (nutriVal2) nutriVal2.textContent = '3.000mg';
+    if (nutriLbl2) nutriLbl2.textContent = 'CREATINA por porção';
+    if (nutriVal3) nutriVal3.textContent = '0g';
+    if (nutriLbl3) nutriLbl3.textContent = 'AÇÚCAR e zero glúten';
+    if (nutriVal4) nutriVal4.textContent = '100%';
+    if (nutriLbl4) nutriLbl4.textContent = 'MATÉRIA-PRIMA importada';
+  } else if (isPreTreino) {
+    if (nutriVal1) nutriVal1.textContent = '200mg';
+    if (nutriLbl1) nutriLbl1.textContent = 'CAFEÍNA anidra';
+    if (nutriVal2) nutriVal2.textContent = '2.000mg';
+    if (nutriLbl2) nutriLbl2.textContent = 'BETA-ALANINA pura';
+    if (nutriVal3) nutriVal3.textContent = '1.000mg';
+    if (nutriLbl3) nutriLbl3.textContent = 'TAURINA por porção';
+    if (nutriVal4) nutriVal4.textContent = '100%';
+    if (nutriLbl4) nutriLbl4.textContent = 'FOCO & EXPLOSÃO';
+  } else if (isBcaa) {
+    if (nutriVal1) nutriVal1.textContent = '5g';
+    if (nutriLbl1) nutriLbl1.textContent = 'AMINOÁCIDOS 2:1:1';
+    if (nutriVal2) nutriVal2.textContent = '2.500mg';
+    if (nutriLbl2) nutriLbl2.textContent = 'L-LEUCINA isolada';
+    if (nutriVal3) nutriVal3.textContent = '0g';
+    if (nutriLbl3) nutriLbl3.textContent = 'CARBOIDRATOS / Açúcar';
+    if (nutriVal4) nutriVal4.textContent = '100%';
+    if (nutriLbl4) nutriLbl4.textContent = 'ANTI-CATABÓLICO';
+  } else if (isBar) {
+    if (nutriVal1) nutriVal1.textContent = '16g';
+    if (nutriLbl1) nutriLbl1.textContent = 'PROTEÍNA por barra';
+    if (nutriVal2) nutriVal2.textContent = '3g';
+    if (nutriLbl2) nutriLbl2.textContent = 'FIBRAS ALIMENTARES';
+    if (nutriVal3) nutriVal3.textContent = '0g';
+    if (nutriLbl3) nutriLbl3.textContent = 'AÇÚCAR ADICIONADO';
+    if (nutriVal4) nutriVal4.textContent = '100%';
+    if (nutriLbl4) nutriLbl4.textContent = 'PRATICIDADE PROTEICA';
+  } else {
+    if (nutriVal1) nutriVal1.textContent = '24g';
+    if (nutriLbl1) nutriLbl1.textContent = 'PROTEÍNA por porção';
+    if (nutriVal2) nutriVal2.textContent = '5,4g';
+    if (nutriLbl2) nutriLbl2.textContent = 'BCAAs por porção';
+    if (nutriVal3) nutriVal3.textContent = '4g';
+    if (nutriLbl3) nutriLbl3.textContent = 'GLUTAMINA por porção';
+    if (nutriVal4) nutriVal4.textContent = '100%';
+    if (nutriLbl4) nutriLbl4.textContent = 'MATÉRIA-PRIMA importada';
+  }
+
+  detailQty = 1;
+  if (detailQtyVal) detailQtyVal.textContent = 1;
+
+  if (productDetailModal) productDetailModal.classList.add('open');
+};
 
 /* --------------------------------------------------------------------------
    RECOMENDADOR INTERATIVO DE COMBOS DO VENDEDOR VARELA & ADMIN MANAGER
@@ -2751,7 +2906,7 @@ let defaultAdminCombosData = {
     name: 'Combo 2: Hipertrofia Custo-Benefício',
     title: '🔥 Combo Hipertrofia Essencial',
     desc: 'Indicação perfeita para quem quer acelerar a hipertrofia com o melhor custo-benefício!',
-    img: 'whey_integralmedica.png',
+    img: 'hero_supplements_pedestal.png',
     oldPrice: 229.80,
     price: 184.90,
     saveBadge: 'ECONOMIZE R$ 44,90',
@@ -2762,7 +2917,7 @@ let defaultAdminCombosData = {
     name: 'Combo 3: Definição & Emagrecimento PRO',
     title: '⚡ Combo Definição PRO (Vendedor Varela)',
     desc: 'Kit de alta performance para secar gordura mantendo massa magra em treinos diários!',
-    img: 'pretreino_horus.png',
+    img: 'hero_supplements_pedestal.png',
     oldPrice: 279.70,
     price: 219.90,
     saveBadge: 'ECONOMIZE R$ 59,80',
@@ -2773,7 +2928,7 @@ let defaultAdminCombosData = {
     name: 'Combo 4: Definição Custo-Benefício',
     title: '⚡ Combo Definição & Shape Trincado',
     desc: 'Montado especialmente focado em Queima de Gordura preservando sua Massa Magra com o menor custo!',
-    img: 'pretreino_horus.png',
+    img: 'hero_supplements_pedestal.png',
     oldPrice: 154.80,
     price: 119.90,
     saveBadge: 'ECONOMIZE R$ 34,90',
@@ -2795,7 +2950,7 @@ let defaultAdminCombosData = {
     name: 'Combo 6: Energia & Foco Custo-Benefício',
     title: '🚀 Combo Energia, Pump & Foco Total',
     desc: 'Ideal para transformar seu rendimento nos treinos, eliminando a preguiça!',
-    img: 'pretreino_horus.png',
+    img: 'hero_supplements_pedestal.png',
     oldPrice: 179.80,
     price: 139.90,
     saveBadge: 'ECONOMIZE R$ 39,90',
@@ -2810,7 +2965,7 @@ function getAdminCombosData() {
       const parsed = JSON.parse(saved);
       // Garantir que todos os 6 combos existam
       return Object.assign({}, defaultAdminCombosData, parsed);
-    } catch (e) {}
+    } catch (e) { }
   }
   return defaultAdminCombosData;
 }
@@ -2909,6 +3064,129 @@ function parseComboItemsText(text) {
   });
 }
 
+// Mapeador Inteligente: Retorna Imagem Recortada sem Fundo, Badge e Instruções de Uso
+function getProductInfoForItem(name, detail) {
+  const lower = ((name || '') + ' ' + (detail || '')).toLowerCase();
+
+  if (lower.includes('whey') || lower.includes('isolado') || lower.includes('concentrado')) {
+    return {
+      id: 'p1',
+      name: name || 'Whey Protein Concentrado 900g',
+      price: 139.90,
+      img: 'whey_crop.png',
+      badge: 'Pós-Treino',
+      badgeBg: 'rgba(255, 107, 0, 0.2)',
+      badgeColor: 'var(--primary-orange)',
+      badgeBorder: 'rgba(255, 107, 0, 0.45)',
+      badgeIcon: 'fa-dumbbell',
+      howToTake: 'Tomar 1 scoop (30g) diluído em 200ml de água logo após o treino.'
+    };
+  }
+  if (lower.includes('creatina')) {
+    return {
+      id: 'p3',
+      name: name || 'Creatina Monohidratada 300g',
+      price: 89.90,
+      img: 'creatina_crop.png',
+      badge: 'Uso Diário',
+      badgeBg: 'rgba(16, 185, 129, 0.2)',
+      badgeColor: 'var(--accent-green)',
+      badgeBorder: 'rgba(16, 185, 129, 0.45)',
+      badgeIcon: 'fa-clock',
+      howToTake: 'Tomar 1 dosador (3g) diariamente em água ou suco (inclusive sem treino).'
+    };
+  }
+  if (lower.includes('pré-treino') || lower.includes('pre-treino') || lower.includes('pretreino') || lower.includes('horus') || lower.includes('hórus') || lower.includes('explosão') || lower.includes('explosao')) {
+    return {
+      id: 'p2',
+      name: name || 'Pré-Treino Explosão 300g',
+      price: 89.90,
+      img: 'pretreino_crop.png',
+      badge: 'Pré-Treino',
+      badgeBg: 'rgba(239, 68, 68, 0.2)',
+      badgeColor: '#EF4444',
+      badgeBorder: 'rgba(239, 68, 68, 0.45)',
+      badgeIcon: 'fa-fire-flame-curved',
+      howToTake: 'Tomar 1 dose de 20 a 30 minutos antes do treino.'
+    };
+  }
+  if (lower.includes('bcaa') || lower.includes('aminoácid') || lower.includes('aminoacid')) {
+    return {
+      id: 'p4',
+      name: name || 'BCAA 2:1:1 200g Pura Nutrição',
+      price: 49.90,
+      img: 'pretreino_crop.png',
+      badge: 'Anti-Catabólico',
+      badgeBg: 'rgba(2, 132, 199, 0.2)',
+      badgeColor: 'var(--accent-cyan)',
+      badgeBorder: 'rgba(2, 132, 199, 0.45)',
+      badgeIcon: 'fa-shield-halved',
+      howToTake: 'Consumir 5g antes ou após os treinos intensos.'
+    };
+  }
+  if (lower.includes('protein bar') || lower.includes('barra') || lower.includes('barrinha') || lower.includes('snack')) {
+    return {
+      id: 'p5',
+      name: name || 'Protein Bar Chocolate 60g',
+      price: 14.90,
+      img: 'protein_bar_crop.png',
+      badge: 'Lanche Proteico',
+      badgeBg: 'rgba(234, 179, 8, 0.2)',
+      badgeColor: 'var(--accent-yellow)',
+      badgeBorder: 'rgba(234, 179, 8, 0.45)',
+      badgeIcon: 'fa-cookie-bite',
+      howToTake: '1 barra como lanche proteico prático no intervalo das refeições.'
+    };
+  }
+  if (lower.includes('coqueteleira') || lower.includes('shaker') || lower.includes('garrafa') || lower.includes('misturador')) {
+    return {
+      id: 'brinde_shaker',
+      name: name || 'Coqueteleira Shaker Simplo (BRINDE)',
+      price: 0,
+      img: 'shaker_crop.png',
+      badge: 'Brinde VIP',
+      badgeBg: 'rgba(16, 185, 129, 0.25)',
+      badgeColor: 'var(--accent-green)',
+      badgeBorder: 'rgba(16, 185, 129, 0.5)',
+      badgeIcon: 'fa-gift',
+      howToTake: 'Coqueteleira oficial para preparar suas doses com praticidade.'
+    };
+  }
+
+  // Fallback se for algum produto customizado
+  const matchStock = (typeof stockData !== 'undefined' && Array.isArray(stockData))
+    ? stockData.find(s => s.name && s.name.toLowerCase().includes(lower.substring(0, 10)))
+    : null;
+
+  if (matchStock) {
+    return {
+      id: matchStock.id,
+      name: name,
+      price: matchStock.price || 49.90,
+      img: matchStock.imgSrc || 'whey_crop.png',
+      badge: 'Suplemento Recomendado',
+      badgeBg: 'rgba(255, 107, 0, 0.2)',
+      badgeColor: 'var(--primary-orange)',
+      badgeBorder: 'rgba(255, 107, 0, 0.45)',
+      badgeIcon: 'fa-circle-check',
+      howToTake: 'Consumir conforme orientação da embalagem'
+    };
+  }
+
+  return {
+    id: 'prod_custom_' + Math.random().toString(36).substr(2, 4),
+    name: name,
+    price: 49.90,
+    img: 'whey_crop.png',
+    badge: 'Suplemento Indicado',
+    badgeBg: 'rgba(255, 107, 0, 0.2)',
+    badgeColor: 'var(--primary-orange)',
+    badgeBorder: 'rgba(255, 107, 0, 0.45)',
+    badgeIcon: 'fa-circle-check',
+    howToTake: 'Consumir conforme orientação da embalagem'
+  };
+}
+
 let quizState = {
   frequency: '',
   frequencyLabel: '',
@@ -2918,7 +3196,7 @@ let quizState = {
   generatedCombo: null
 };
 
-window.selectQuizStep = function(step, value, label) {
+window.selectQuizStep = function (step, value, label) {
   if (step === 1) {
     quizState.frequency = value;
     quizState.frequencyLabel = label;
@@ -2930,7 +3208,7 @@ window.selectQuizStep = function(step, value, label) {
   }
 };
 
-window.goToQuizStep = function(stepNum) {
+window.goToQuizStep = function (stepNum) {
   for (let i = 1; i <= 3; i++) {
     const stepEl = document.getElementById(`quiz-step-${i}`);
     const dotEl = document.getElementById(`step-dot-${i}`);
@@ -2952,12 +3230,12 @@ window.goToQuizStep = function(stepNum) {
   }
 };
 
-window.finishQuiz = function(investmentVal) {
+window.finishQuiz = function (investmentVal) {
   quizState.investment = investmentVal;
   calculateRecommendedCombo();
 };
 
-window.restartQuiz = function() {
+window.restartQuiz = function () {
   quizState = { frequency: '', frequencyLabel: '', goal: '', goalLabel: '', investment: '', generatedCombo: null };
   goToQuizStep(1);
 };
@@ -2989,47 +3267,27 @@ function calculateRecommendedCombo() {
   }
 
   const rawCombo = combos[targetKey] || combos['massa_pro'];
+  const items = parseComboItemsText(rawCombo.itemsText);
 
-  let cartProducts = [
-    { id: 'p1', name: 'Whey Protein Concentrado 900g', price: 139.90, imgSrc: 'whey_integralmedica.png', qty: 1 },
-    { id: 'p3', name: 'Creatina Monohidratada 300g', price: 89.90, imgSrc: 'creatina_integralmedica.png', qty: 1 }
-  ];
-  if (targetKey === 'massa_pro') {
-    cartProducts.push({ id: 'p2', name: 'Pré-Treino Explosão 300g', price: 89.90, imgSrc: 'pretreino_horus.png', qty: 1 });
-  } else if (targetKey === 'definicao_pro') {
-    cartProducts = [
-      { id: 'p1', name: 'Whey Protein Concentrado 900g', price: 139.90, imgSrc: 'whey_integralmedica.png', qty: 1 },
-      { id: 'p2', name: 'Pré-Treino Explosão 300g', price: 89.90, imgSrc: 'pretreino_horus.png', qty: 1 },
-      { id: 'p4', name: 'BCAA 2:1:1 200g Pura Nutrição', price: 49.90, imgSrc: 'hero_supplements_pedestal.png', qty: 1 }
-    ];
-  } else if (targetKey === 'definicao_essencial') {
-    cartProducts = [
-      { id: 'p2', name: 'Pré-Treino Explosão 300g', price: 89.90, imgSrc: 'pretreino_horus.png', qty: 1 },
-      { id: 'p4', name: 'BCAA 2:1:1 200g Pura Nutrição', price: 49.90, imgSrc: 'hero_supplements_pedestal.png', qty: 1 },
-      { id: 'p5', name: 'Protein Bar Chocolate 60g', price: 14.90, imgSrc: 'protein_bar.png', qty: 1 }
-    ];
-  } else if (targetKey === 'energia_pro') {
-    cartProducts = [
-      { id: 'p1', name: 'Whey Protein Concentrado 900g', price: 139.90, imgSrc: 'whey_integralmedica.png', qty: 1 },
-      { id: 'p2', name: 'Pré-Treino Explosão 300g', price: 89.90, imgSrc: 'pretreino_horus.png', qty: 1 },
-      { id: 'p3', name: 'Creatina Monohidratada 300g', price: 89.90, imgSrc: 'creatina_integralmedica.png', qty: 1 }
-    ];
-  } else if (targetKey === 'energia_essencial') {
-    cartProducts = [
-      { id: 'p2', name: 'Pré-Treino Explosão 300g', price: 89.90, imgSrc: 'pretreino_horus.png', qty: 1 },
-      { id: 'p3', name: 'Creatina Monohidratada 300g', price: 89.90, imgSrc: 'creatina_integralmedica.png', qty: 1 }
-    ];
-  }
+  // Mapeia TODOS os produtos que o usuário deve tomar com imagens, badges e instruções completas
+  const resolvedProducts = items.map(it => {
+    const info = getProductInfoForItem(it.name, it.detail);
+    return {
+      ...info,
+      originalName: it.name,
+      detail: it.detail
+    };
+  });
 
   const combo = {
     title: rawCombo.title,
     desc: rawCombo.desc,
     img: rawCombo.img,
-    items: parseComboItemsText(rawCombo.itemsText),
+    items: items,
+    resolvedProducts: resolvedProducts,
     oldPrice: rawCombo.oldPrice,
     price: rawCombo.price,
-    saveBadge: rawCombo.saveBadge,
-    cartProducts: cartProducts
+    saveBadge: rawCombo.saveBadge
   };
 
   quizState.generatedCombo = combo;
@@ -3042,35 +3300,106 @@ function calculateRecommendedCombo() {
   if (resultEl) resultEl.style.display = 'block';
 
   const labelEl = document.getElementById('quiz-step-label');
-  if (labelEl) labelEl.textContent = 'Indicação Pronta: Seu Combo Personalizado';
+  if (labelEl) labelEl.textContent = 'Indicação Pronta: Seu Protocolo Personalizado';
 
-  document.getElementById('result-combo-title').textContent = combo.title;
-  document.getElementById('result-combo-desc').textContent = combo.desc;
-  document.getElementById('result-combo-img').src = combo.img;
-  document.getElementById('result-combo-oldprice').textContent = `R$ ${combo.oldPrice.toFixed(2).replace('.', ',')}`;
-  document.getElementById('result-combo-price').textContent = `R$ ${combo.price.toFixed(2).replace('.', ',')}`;
-  document.getElementById('result-combo-badge').textContent = combo.saveBadge;
+  const titleEl = document.getElementById('result-combo-title');
+  if (titleEl) titleEl.textContent = combo.title;
 
-  const itemsUl = document.getElementById('result-combo-items');
-  if (itemsUl) {
-    itemsUl.innerHTML = combo.items.map(it => `
-      <li style="display: flex; align-items: flex-start; gap: 0.5rem;">
-        <i class="fa-solid fa-circle-check" style="color: var(--accent-green); font-size: 1rem; margin-top: 0.15rem; flex-shrink: 0;"></i>
-        <div>
-          <strong style="color: #fff;">${it.name}</strong>
-          <span style="display: block; font-size: 0.78rem; color: var(--text-muted);">${it.detail}</span>
+  const descEl = document.getElementById('result-combo-desc');
+  if (descEl) descEl.textContent = combo.desc;
+
+  const oldPriceEl = document.getElementById('result-combo-oldprice');
+  if (oldPriceEl) oldPriceEl.textContent = `R$ ${combo.oldPrice.toFixed(2).replace('.', ',')}`;
+
+  const priceEl = document.getElementById('result-combo-price');
+  if (priceEl) priceEl.textContent = `R$ ${combo.price.toFixed(2).replace('.', ',')}`;
+
+  const badgeEl = document.getElementById('result-combo-badge');
+  if (badgeEl) badgeEl.textContent = combo.saveBadge;
+
+  // 1. RENDERIZA AS IMAGENS SEM FUNDO JUNTAS NO PALCO CENTRAL (SEM CARDS INDIVIDUAIS)
+  const unifiedStage = document.getElementById('result-combo-unified-stage');
+  if (unifiedStage) {
+    // Organiza para que o produto mais alto (ex: Whey) fique centralizado e os outros ladeando
+    const stageItems = [...resolvedProducts];
+    const wheyIdx = stageItems.findIndex(p => p.id === 'p1');
+    if (wheyIdx > -1 && stageItems.length >= 3) {
+      const whey = stageItems.splice(wheyIdx, 1)[0];
+      const mid = Math.floor(stageItems.length / 2);
+      stageItems.splice(mid, 0, whey);
+    }
+
+    const total = stageItems.length;
+    unifiedStage.innerHTML = stageItems.map((p, idx) => {
+      // Determina classe de tamanho e profundidade
+      const isWhey = p.id === 'p1';
+      const isShaker = p.id === 'brinde_shaker';
+      const isBar = p.id === 'p5';
+      const sizeClass = isWhey ? 'tall' : (isBar ? 'small' : (isShaker ? 'tall' : 'medium'));
+      
+      // Camada z-index: itens centrais mais à frente
+      const distFromCenter = Math.abs(idx - (total - 1) / 2);
+      const zIndex = Math.max(1, 6 - Math.round(distFromCenter * 2));
+
+      return `
+        <div class="combo-stage-item ${sizeClass}" style="z-index: ${zIndex};" title="${p.originalName}">
+          <img src="${p.img}" alt="${p.originalName}" class="combo-stage-item-img">
         </div>
-      </li>
+      `;
+    }).join('');
+  }
+
+  // 2. RENDERIZA O PROTOCOLO DE ROTINA DIÁRIA (COMO TOMAR CADA UM, SEM FORMATO DE CARD)
+  const routineList = document.getElementById('result-combo-routine-list');
+  if (routineList) {
+    routineList.innerHTML = resolvedProducts.map(p => `
+      <div class="combo-routine-item">
+        <div class="combo-routine-thumb">
+          <img src="${p.img}" alt="${p.originalName}">
+        </div>
+        <div class="combo-routine-body">
+          <div class="combo-routine-top">
+            <span class="combo-routine-prod-name">${p.originalName}</span>
+            <span class="combo-routine-badge" style="color: ${p.badgeColor}; background: ${p.badgeBg}; border: 1px solid ${p.badgeBorder};">
+              <i class="fa-solid ${p.badgeIcon}"></i> ${p.badge}
+            </span>
+          </div>
+          <p class="combo-routine-instruction">
+            <strong>Como tomar:</strong> ${p.howToTake}
+          </p>
+        </div>
+      </div>
     `).join('');
   }
 
+  // Compatibilidade com elementos legados caso existam
+  const legacyComboImg = document.getElementById('result-combo-img');
+  if (legacyComboImg) legacyComboImg.src = combo.img;
+  const legacyItemsUl = document.getElementById('result-combo-items');
+  if (legacyItemsUl) {
+    legacyItemsUl.innerHTML = resolvedProducts.map(p => `<li>${p.originalName}</li>`).join('');
+  }
+
+  // 3. Adicionar Todos os Produtos ao Carrinho da Loja
   const btnAddCombo = document.getElementById('btn-add-quiz-combo');
   if (btnAddCombo) {
-    btnAddCombo.onclick = function() {
-      combo.cartProducts.forEach(prod => {
-        addToCart(prod.id, prod.name, prod.price, prod.imgSrc);
+    btnAddCombo.onclick = function () {
+      resolvedProducts.forEach(prod => {
+        const existing = cart.find(item => item.id === prod.id);
+        if (existing) {
+          existing.qty += 1;
+        } else {
+          cart.push({
+            id: prod.id,
+            name: prod.originalName,
+            price: prod.price,
+            imgSrc: prod.img,
+            qty: 1
+          });
+        }
       });
-      showToast(`🛒 ${combo.title} adicionado ao seu carrinho com sucesso!`);
+      renderCart();
+      showToast(`🛒 Todos os produtos do seu combo foram adicionados ao carrinho!`);
       const cartOverlay = document.getElementById('cart-overlay');
       if (cartOverlay) cartOverlay.classList.add('open');
     };
@@ -3078,34 +3407,78 @@ function calculateRecommendedCombo() {
 }
 
 /* --------------------------------------------------------------------------
-   SUPABASE CLOUD DATABASE REAL-TIME INTEGRATION
+   SUPABASE CLOUD DATABASE REAL-TIME INTEGRATION & FIXED CONNECTION MANAGER
    -------------------------------------------------------------------------- */
+const DEFAULT_SUPABASE_URL = 'https://gojwbyqfywmofspnirqk.supabase.co';
 let supabaseClient = null;
+let supabaseChannel = null;
+let supabaseRetryCount = 0;
+let supabaseHeartbeatTimer = null;
+let isSupabaseConnecting = false;
 
 window.initSupabaseClient = async function initSupabaseClient() {
-  let storedUrl = localStorage.getItem('simplo_supabase_url') || 'https://gojwbyqfywmofspnirqk.supabase.co';
+  let storedUrl = localStorage.getItem('simplo_supabase_url') || DEFAULT_SUPABASE_URL;
   let storedKey = localStorage.getItem('simplo_supabase_key') || '';
 
   const urlInput = document.getElementById('input-supabase-url');
   const keyInput = document.getElementById('input-supabase-key');
 
   if (urlInput && !urlInput.value) urlInput.value = storedUrl;
-  if (keyInput && storedKey) keyInput.value = storedKey;
+  if (keyInput && storedKey && !keyInput.value) keyInput.value = storedKey;
 
   const badge = document.getElementById('supabase-status-badge');
 
-  if (!storedUrl || !storedKey || typeof window.supabase === 'undefined') {
+  // Aguardar carregamento da biblioteca Supabase JS CDN se ainda estiver baixando
+  if (typeof window.supabase === 'undefined') {
+    if (supabaseRetryCount < 15) {
+      supabaseRetryCount++;
+      if (badge) {
+        badge.className = 'stock-status-badge status-low';
+        badge.innerHTML = '🟡 Carregando SDK Supabase...';
+      }
+      setTimeout(initSupabaseClient, 500);
+      return;
+    } else {
+      if (badge) {
+        badge.className = 'stock-status-badge status-danger';
+        badge.innerHTML = '🔴 SDK Supabase não carregado';
+      }
+      return;
+    }
+  }
+
+  // Se não houver chave salva, avisar no painel
+  if (!storedUrl || !storedKey) {
     if (badge) {
       badge.className = 'stock-status-badge status-low';
-      badge.innerHTML = '🟡 Local (Desconectado)';
+      badge.innerHTML = '🟡 Local (Aguardando Chave)';
     }
     return;
   }
 
+  if (isSupabaseConnecting) return;
+  isSupabaseConnecting = true;
+
   try {
-    supabaseClient = window.supabase.createClient(storedUrl, storedKey);
-    
-    // Testar Conexão Realtime/REST
+    if (badge) {
+      badge.className = 'stock-status-badge status-low';
+      badge.innerHTML = '🟡 Conectando ao Supabase...';
+    }
+
+    // Criar cliente Supabase com persistência de sessão e auto-reconexão
+    supabaseClient = window.supabase.createClient(storedUrl, storedKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
+      }
+    });
+
+    // Testar Conexão REST/DB
     const { data, error } = await supabaseClient.from('products').select('id').limit(1);
 
     if (error) {
@@ -3114,121 +3487,105 @@ window.initSupabaseClient = async function initSupabaseClient() {
         badge.className = 'stock-status-badge status-danger';
         badge.innerHTML = '🔴 Erro na Chave do Supabase';
       }
-      showToast('⚠️ Erro ao autenticar no Supabase. Verifique a chave inserida.');
+      isSupabaseConnecting = false;
       return;
     }
 
+    supabaseRetryCount = 0;
+
     if (badge) {
       badge.className = 'stock-status-badge status-ok';
-      badge.innerHTML = '🟢 Supabase Conectado';
+      badge.innerHTML = '🟢 Supabase Conectado (Nuvem)';
     }
 
-    // Carregar Dados da Nuvem
-    fetchSupabaseData();
+    // Iniciar Sincronização de Dados de Entrada e Saída
+    await fetchSupabaseData();
 
-    // Inscrição Realtime para novos pedidos
-    supabaseClient
-      .channel('public:orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
-        if (payload.eventType === 'INSERT') {
-          const newOrd = payload.new;
-          if (!ordersData.find(o => o.id === newOrd.id)) {
-            ordersData.unshift({
-              id: newOrd.id,
-              client: newOrd.client,
-              phone: newOrd.phone,
-              formattedPhone: newOrd.formatted_phone || newOrd.phone,
-              address: newOrd.address,
-              payment: newOrd.payment,
-              items: newOrd.items,
-              total: newOrd.total,
-              status: newOrd.status,
-              approvalState: newOrd.approval_state || 'pending',
-              class: newOrd.status.includes('Concluído') ? 'status-ok' : (newOrd.status.includes('Reprovado') ? 'status-danger' : 'status-low')
-            });
-            renderOrdersTable();
-            updateAdminKpis();
-            showToast(`⚡ NOVO PEDIDO RECEBIDO DA NUVEM! (${newOrd.id} - ${newOrd.client})`);
-          }
-        } else if (payload.eventType === 'UPDATE') {
-          const updated = payload.new;
-          const target = ordersData.find(o => o.id === updated.id);
-          if (target) {
-            target.status = updated.status;
-            target.approvalState = updated.approval_state;
-            target.class = updated.status.includes('Concluído') ? 'status-ok' : (updated.status.includes('Reprovado') ? 'status-danger' : 'status-low');
-            renderOrdersTable();
-            updateAdminKpis();
-          }
-        }
-      })
-      .subscribe();
+    // Inscrição Realtime com reconexão automática
+    setupSupabaseRealtimeChannel(badge);
+
+    // Iniciar Heartbeat para manter a conexão ativa (a cada 30 seg)
+    startSupabaseHeartbeat();
 
   } catch (e) {
     console.error('Erro ao conectar ao Supabase:', e);
     if (badge) {
       badge.className = 'stock-status-badge status-danger';
-      badge.innerHTML = '🔴 Erro de Conexão';
+      badge.innerHTML = '🔴 Erro de Conexão (Reconectando...)';
     }
+    // Tentar reconectar em 5 segundos
+    setTimeout(() => {
+      isSupabaseConnecting = false;
+      initSupabaseClient();
+    }, 5000);
+  } finally {
+    isSupabaseConnecting = false;
   }
 };
 
-window.saveSupabaseConfig = async function saveSupabaseConfig() {
-  const urlInput = document.getElementById('input-supabase-url');
-  const keyInput = document.getElementById('input-supabase-key');
-
-  let url = urlInput && urlInput.value.trim() ? urlInput.value.trim() : 'https://gojwbyqfywmofspnirqk.supabase.co';
-  let key = keyInput ? keyInput.value.trim() : '';
-
-  if (urlInput) urlInput.value = url;
-
-  if (!key) {
-    showToast('⚠️ Cole a sua Chave Pública (Publishable Key) no campo indicado!');
-    if (keyInput) keyInput.focus();
-    return;
-  }
-
-  localStorage.setItem('simplo_supabase_url', url);
-  localStorage.setItem('simplo_supabase_key', key);
-
-  showToast('⚡ Testando conexão com o Banco de Dados Supabase...');
-  await initSupabaseClient();
-};
-
-async function fetchSupabaseData() {
+function setupSupabaseRealtimeChannel(badge) {
   if (!supabaseClient) return;
-  try {
-    // Pedidos
-    const { data: dbOrders, error: errOrders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
-    if (!errOrders && dbOrders && dbOrders.length > 0) {
-      ordersData = dbOrders.map(o => ({
-        id: o.id,
-        client: o.client,
-        phone: o.phone,
-        formattedPhone: o.formatted_phone || o.phone,
-        address: o.address,
-        payment: o.payment,
-        items: o.items,
-        total: o.total,
-        status: o.status,
-        approvalState: o.approval_state || 'pending',
-        class: o.status.includes('Concluído') ? 'status-ok' : (o.status.includes('Reprovado') ? 'status-danger' : 'status-low')
-      }));
-      renderOrdersTable();
-      updateAdminKpis();
-    }
 
-    // Produtos
-    const { data: dbProducts, error: errProds } = await supabaseClient.from('products').select('*');
-    if (!errProds && dbProducts && dbProducts.length > 0) {
-      dbProducts.forEach(p => {
-        const existing = stockData.find(s => s.id === p.id);
-        if (existing) {
-          existing.stock = p.stock;
-          existing.isPaused = p.is_paused;
-          existing.status = p.stock === 0 ? 'danger' : (p.stock <= 10 ? 'low' : 'ok');
+  if (supabaseChannel) {
+    try {
+      supabaseClient.removeChannel(supabaseChannel);
+    } catch (err) { }
+  }
+
+  supabaseChannel = supabaseClient
+    .channel('public:orders_and_products')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+      if (payload.eventType === 'INSERT') {
+        const newOrd = payload.new;
+        if (!ordersData.find(o => o.id === newOrd.id)) {
+          ordersData.unshift({
+            id: newOrd.id,
+            client: newOrd.client,
+            phone: newOrd.phone,
+            formattedPhone: newOrd.formatted_phone || newOrd.phone,
+            address: newOrd.address,
+            payment: newOrd.payment,
+            items: newOrd.items,
+            total: newOrd.total,
+            status: newOrd.status,
+            approvalState: newOrd.approval_state || 'pending',
+            class: newOrd.status.includes('Concluído') ? 'status-ok' : (newOrd.status.includes('Reprovado') ? 'status-danger' : 'status-low')
+          });
+          saveOrdersToLocalStorage();
+          renderOrdersTable();
+          updateAdminKpis();
+          showToast(`⚡ NOVO PEDIDO RECEBIDO DA NUVEM! (${newOrd.id} - ${newOrd.client})`);
+        }
+      } else if (payload.eventType === 'UPDATE') {
+        const updated = payload.new;
+        const target = ordersData.find(o => o.id === updated.id);
+        if (target) {
+          target.status = updated.status;
+          target.approvalState = updated.approval_state;
+          target.class = updated.status.includes('Concluído') ? 'status-ok' : (updated.status.includes('Reprovado') ? 'status-danger' : 'status-low');
+          saveOrdersToLocalStorage();
+          renderOrdersTable();
+          updateAdminKpis();
+        }
+      }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+      if (payload.eventType === 'UPDATE' || payload.eventType === 'INSERT') {
+        const p = payload.new;
+        let item = stockData.find(s => s.id === p.id);
+        if (item) {
+          item.name = p.name || item.name;
+          item.brand = p.brand || item.brand;
+          item.price = p.price !== undefined ? p.price : item.price;
+          item.oldPrice = p.old_price || item.oldPrice;
+          item.stock = p.stock !== undefined ? p.stock : item.stock;
+          item.isPaused = p.is_paused !== undefined ? p.is_paused : item.isPaused;
+          item.category = p.category || item.category;
+          item.desc = p.description || item.desc;
+          item.imgSrc = p.img_src || item.imgSrc;
+          item.status = item.stock === 0 ? 'danger' : (item.stock <= 10 ? 'low' : 'ok');
         } else {
-          stockData.push({
+          item = {
             id: p.id,
             name: p.name,
             brand: p.brand,
@@ -3236,15 +3593,211 @@ async function fetchSupabaseData() {
             oldPrice: p.old_price || p.price * 1.25,
             stock: p.stock,
             sales: p.sales || 0,
+            category: p.category || 'hipertrofia',
+            desc: p.description || '',
+            imgSrc: p.img_src || 'whey_integralmedica.png',
             rank: '-',
             status: p.stock === 0 ? 'danger' : (p.stock <= 10 ? 'low' : 'ok'),
             isPaused: p.is_paused || false
-          });
+          };
+          stockData.push(item);
+          showToast(`⚡ NOVO PRODUTO ADICIONADO À LOJA VIA NUVEM! (${p.name})`);
+        }
+
+        // Salvar no localStorage
+        const savedProds = JSON.parse(localStorage.getItem('simplo_custom_products') || '[]');
+        const idx = savedProds.findIndex(sp => sp.id === item.id);
+        if (idx >= 0) savedProds[idx] = item;
+        else savedProds.push(item);
+        localStorage.setItem('simplo_custom_products', JSON.stringify(savedProds));
+
+        if (typeof ensureProductCardOnStorefront === 'function') ensureProductCardOnStorefront(item);
+        renderAdminTable('all');
+        renderManageProductsTable();
+        updateStoreStockBadges();
+      } else if (payload.eventType === 'DELETE') {
+        const deletedId = payload.old ? payload.old.id : null;
+        if (deletedId) {
+          stockData = stockData.filter(s => s.id !== deletedId);
+          const card = document.querySelector(`.product-card[data-id="${deletedId}"]`);
+          if (card) card.remove();
+          renderAdminTable('all');
+          renderManageProductsTable();
+          updateStoreStockBadges();
+        }
+      }
+    })
+    .subscribe((status) => {
+      console.log('Status da Conexão Realtime Supabase:', status);
+      if (status === 'SUBSCRIBED') {
+        if (badge) {
+          badge.className = 'stock-status-badge status-ok';
+          badge.innerHTML = '🟢 Supabase Conectado (Realtime ON)';
+        }
+      } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+        if (badge) {
+          badge.className = 'stock-status-badge status-low';
+          badge.innerHTML = '🟡 Reconectando Realtime...';
+        }
+        setTimeout(() => {
+          if (supabaseClient) setupSupabaseRealtimeChannel(badge);
+        }, 3000);
+      }
+    });
+}
+
+function startSupabaseHeartbeat() {
+  if (supabaseHeartbeatTimer) clearInterval(supabaseHeartbeatTimer);
+  supabaseHeartbeatTimer = setInterval(async () => {
+    if (!supabaseClient) return;
+    try {
+      const { error } = await supabaseClient.from('products').select('id').limit(1);
+      if (error) {
+        console.warn('Alerta do Supabase Heartbeat: Falha de ping REST. Tentando reconectar...', error);
+        initSupabaseClient();
+      }
+    } catch (e) {
+      console.warn('Erro de rede no Heartbeat do Supabase:', e);
+      initSupabaseClient();
+    }
+  }, 30000);
+}
+
+// Auto-reconectar em eventos do sistema
+window.addEventListener('online', () => {
+  console.log('⚡ Conexão de Internet restabelecida. Reconectando ao Supabase...');
+  initSupabaseClient();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    initSupabaseClient();
+  }
+});
+
+window.saveSupabaseConfig = async function saveSupabaseConfig() {
+  const urlInput = document.getElementById('input-supabase-url');
+  const keyInput = document.getElementById('input-supabase-key');
+
+  let url = urlInput && urlInput.value.trim() ? urlInput.value.trim() : DEFAULT_SUPABASE_URL;
+  let key = keyInput ? keyInput.value.trim() : '';
+
+  if (urlInput) urlInput.value = url;
+
+  if (!key) {
+    showToast('⚠️ Cole a sua Chave Pública (Publishable Key / Anon Key) no campo indicado!');
+    if (keyInput) keyInput.focus();
+    return;
+  }
+
+  localStorage.setItem('simplo_supabase_url', url);
+  localStorage.setItem('simplo_supabase_key', key);
+
+  showToast('⚡ Conexão salva e fixada! Testando sincronização em tempo real...');
+  await initSupabaseClient();
+};
+
+async function fetchSupabaseData() {
+  if (!supabaseClient) return;
+  try {
+    // 1. Pedidos da Nuvem
+    const { data: dbOrders, error: errOrders } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+    if (!errOrders && dbOrders) {
+      if (dbOrders.length > 0) {
+        dbOrders.forEach(o => {
+          const target = ordersData.find(local => local.id === o.id);
+          if (!target) {
+            ordersData.push({
+              id: o.id,
+              client: o.client,
+              phone: o.phone,
+              formattedPhone: o.formatted_phone || o.phone,
+              address: o.address,
+              payment: o.payment,
+              items: o.items,
+              total: o.total,
+              status: o.status,
+              approvalState: o.approval_state || 'pending',
+              class: o.status.includes('Concluído') ? 'status-ok' : (o.status.includes('Reprovado') ? 'status-danger' : 'status-low')
+            });
+          } else {
+            target.status = o.status;
+            target.approvalState = o.approval_state || 'pending';
+          }
+        });
+        saveOrdersToLocalStorage();
+        renderOrdersTable();
+        updateAdminKpis();
+      }
+
+      // Enviar pedidos locais para a nuvem se não existirem no Supabase
+      ordersData.forEach(o => {
+        const foundInDb = dbOrders.find(db => db.id === o.id);
+        if (!foundInDb) {
+          syncOrderToSupabase(o);
         }
       });
-      renderAdminTable('all');
-      renderManageProductsTable();
-      updateStoreStockBadges();
+    }
+
+    // 2. Produtos do Estoque
+    const { data: dbProducts, error: errProds } = await supabaseClient.from('products').select('*');
+    if (!errProds && dbProducts) {
+      if (dbProducts.length > 0) {
+        dbProducts.forEach(p => {
+          let existing = stockData.find(s => s.id === p.id);
+          if (existing) {
+            existing.stock = p.stock;
+            existing.isPaused = p.is_paused;
+            existing.price = p.price || existing.price;
+            if (p.category) existing.category = p.category;
+            if (p.img_src) existing.imgSrc = p.img_src;
+            existing.status = p.stock === 0 ? 'danger' : (p.stock <= 10 ? 'low' : 'ok');
+            if (typeof ensureProductCardOnStorefront === 'function') ensureProductCardOnStorefront(existing);
+          } else {
+            const newProd = {
+              id: p.id,
+              name: p.name,
+              brand: p.brand,
+              price: p.price,
+              oldPrice: p.old_price || p.price * 1.25,
+              stock: p.stock,
+              sales: p.sales || 0,
+              category: p.category || 'hipertrofia',
+              desc: p.description || '',
+              imgSrc: p.img_src || 'whey_integralmedica.png',
+              rank: '-',
+              status: p.stock === 0 ? 'danger' : (p.stock <= 10 ? 'low' : 'ok'),
+              isPaused: p.is_paused || false
+            };
+            stockData.push(newProd);
+            if (typeof ensureProductCardOnStorefront === 'function') ensureProductCardOnStorefront(newProd);
+          }
+        });
+        renderAdminTable('all');
+        renderManageProductsTable();
+        updateStoreStockBadges();
+      }
+
+      // Sincronizar produtos locais com a nuvem
+      stockData.forEach(s => {
+        const foundInDb = dbProducts.find(db => db.id === s.id);
+        if (!foundInDb) {
+          syncStockToSupabase(s.id, s.stock, s.isPaused);
+        }
+      });
+    }
+
+    // 3. Categorias e Imagens da Loja
+    const { data: catSetting } = await supabaseClient.from('store_settings').select('*').eq('key', 'simplo_store_categories').single();
+    if (catSetting && catSetting.value) {
+      try {
+        const parsedCats = JSON.parse(catSetting.value);
+        if (Array.isArray(parsedCats) && parsedCats.length > 0) {
+          storeCategories = parsedCats;
+          saveCategoriesToStorage();
+          renderCategoryControls();
+        }
+      } catch (e) { }
     }
   } catch (e) {
     console.error('Erro ao buscar dados do Supabase:', e);
@@ -3252,7 +3805,7 @@ async function fetchSupabaseData() {
 }
 
 async function syncOrderToSupabase(orderObj) {
-  if (!supabaseClient) return;
+  if (!supabaseClient || !orderObj) return;
   try {
     await supabaseClient.from('orders').upsert({
       id: orderObj.id,
@@ -3281,11 +3834,87 @@ async function syncStockToSupabase(id, stockVal, isPausedVal) {
       name: item.name,
       brand: item.brand,
       price: item.price || 99.90,
+      old_price: item.oldPrice || item.price * 1.25,
       stock: stockVal !== undefined ? stockVal : item.stock,
+      category: item.category || 'hipertrofia',
+      description: item.desc || '',
+      img_src: item.imgSrc || '',
       is_paused: isPausedVal !== undefined ? isPausedVal : item.isPaused,
-      sales: item.sales
+      sales: item.sales || 0
     });
   } catch (e) {
     console.error('Erro ao sincronizar estoque no Supabase', e);
+  }
+}
+
+window.ensureProductCardOnStorefront = function ensureProductCardOnStorefront(item) {
+  if (!item || !item.id) return;
+  const productsGrid = document.querySelector('.products-grid-5cols') || document.querySelector('.products-grid');
+  if (!productsGrid) return;
+
+  let card = document.querySelector(`.product-card[data-id="${item.id}"]`);
+  if (card) {
+    card.setAttribute('data-category', item.category || 'hipertrofia');
+    if (item.isPaused) card.classList.add('paused-card');
+    else card.classList.remove('paused-card');
+
+    const imgEl = card.querySelector('.product-img');
+    if (imgEl && item.imgSrc) imgEl.src = item.imgSrc;
+
+    const nameEl = card.querySelector('.product-name');
+    if (nameEl && item.name) nameEl.innerText = item.name.toUpperCase();
+
+    const priceEl = card.querySelector('.current-price');
+    if (priceEl && item.price) priceEl.innerText = `R$ ${item.price.toFixed(2).replace('.', ',')}`;
+    return;
+  }
+
+  const newCard = document.createElement('div');
+  newCard.className = 'product-card' + (item.isPaused ? ' paused-card' : '');
+  newCard.setAttribute('data-id', item.id);
+  newCard.setAttribute('data-category', item.category || 'hipertrofia');
+  newCard.style.animation = 'fadeIn 0.5s ease';
+
+  newCard.innerHTML = `
+    <div class="product-img-wrap" onclick="openProductDetail('${item.id}')" style="cursor:pointer;">
+      <img src="${item.imgSrc || 'whey_integralmedica.png'}" alt="${item.name}" class="product-img">
+    </div>
+    <div class="product-info">
+      <h3 class="product-name" onclick="openProductDetail('${item.id}')" style="cursor:pointer;">${(item.name || '').toUpperCase()}</h3>
+      <div class="product-rating">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+        <span>(0)</span>
+      </div>
+      <div class="product-price-row">
+        <span class="current-price">R$ ${(item.price || 0).toFixed(2).replace('.', ',')}</span>
+      </div>
+      <button class="btn-add-cart">
+        COMPRAR <i class="fa-solid fa-cart-shopping"></i>
+      </button>
+    </div>
+  `;
+
+  productsGrid.appendChild(newCard);
+};
+
+async function deleteProductFromSupabase(id) {
+  if (!supabaseClient) return;
+  try {
+    await supabaseClient.from('products').delete().eq('id', id);
+  } catch (e) {
+    console.error('Erro ao deletar produto do Supabase', e);
+  }
+}
+
+async function syncCategoriesToSupabase() {
+  if (!supabaseClient) return;
+  try {
+    await supabaseClient.from('store_settings').upsert({
+      key: 'simplo_store_categories',
+      value: JSON.stringify(storeCategories),
+      updated_at: new Date().toISOString()
+    });
+  } catch (e) {
+    console.error('Erro ao sincronizar categorias no Supabase', e);
   }
 }

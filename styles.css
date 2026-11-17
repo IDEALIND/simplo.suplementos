@@ -1797,6 +1797,407 @@ footer {
   border-radius: 12px;
 }
 
+/* --- APRESENTAÇÃO INTEGRADA DO COMBO (TODOS OS PRODUTOS JUNTOS SEM CARDS) --- */
+.combo-result-container {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 2rem;
+  align-items: stretch;
+  background: rgba(11, 23, 39, 0.85);
+  border: 1px solid rgba(255, 107, 0, 0.35);
+  border-radius: 20px;
+  padding: 1.8rem;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 860px) {
+  .combo-result-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 1.2rem;
+  }
+}
+
+/* PALCO VISUAL ONDE OS PRODUTOS FICAM JUNTOS */
+.combo-stage-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 107, 0, 0.18) 0%, rgba(16, 185, 129, 0.06) 45%, rgba(6, 14, 25, 0.4) 70%, transparent 80%);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 1rem 1rem;
+  overflow: hidden;
+  min-height: 380px;
+}
+
+.combo-stage-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 107, 0, 0.15);
+  color: var(--primary-orange);
+  border: 1px solid rgba(255, 107, 0, 0.4);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+}
+
+/* CONTAINER DOS PRODUTOS REUNIDOS (FOTOS SEM FUNDO) */
+.combo-unified-stage {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  min-height: 270px;
+  margin: 0 auto;
+}
+
+.combo-stage-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  margin: 0 -22px; /* Sobreposição realista de bundle comercial */
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  cursor: pointer;
+}
+
+.combo-stage-item:hover {
+  transform: translateY(-10px) scale(1.06);
+  z-index: 20 !important;
+}
+
+.combo-stage-item-img {
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.9));
+  user-select: none;
+  pointer-events: auto;
+  transition: filter 0.3s ease;
+}
+
+.combo-stage-item:hover .combo-stage-item-img {
+  filter: drop-shadow(0 18px 26px rgba(255, 107, 0, 0.4)) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.95));
+}
+
+/* Alturas dos produtos recortados para proporção perfeita */
+.combo-stage-item.tall .combo-stage-item-img {
+  height: 270px;
+  max-width: 210px;
+}
+
+.combo-stage-item.medium .combo-stage-item-img {
+  height: 205px;
+  max-width: 175px;
+}
+
+.combo-stage-item.small .combo-stage-item-img {
+  height: 140px;
+  max-width: 140px;
+}
+
+@media (max-width: 640px) {
+  .combo-unified-stage {
+    min-height: 210px;
+  }
+  .combo-stage-item.tall .combo-stage-item-img {
+    height: 190px;
+    max-width: 150px;
+  }
+  .combo-stage-item.medium .combo-stage-item-img {
+    height: 145px;
+    max-width: 120px;
+  }
+  .combo-stage-item.small .combo-stage-item-img {
+    height: 95px;
+    max-width: 95px;
+  }
+  .combo-stage-item {
+    margin: 0 -14px;
+  }
+}
+
+.combo-stage-shadow {
+  width: 80%;
+  max-width: 380px;
+  height: 22px;
+  margin: -10px auto 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 45%, transparent 75%);
+  border-radius: 50%;
+  filter: blur(5px);
+  position: relative;
+  z-index: 1;
+}
+
+.combo-stage-pedestal {
+  width: 75%;
+  max-width: 340px;
+  height: 14px;
+  margin: -8px auto 0;
+  background: radial-gradient(ellipse at center, rgba(255, 107, 0, 0.6) 0%, rgba(16, 185, 129, 0.3) 50%, transparent 80%);
+  border-radius: 50%;
+  filter: blur(6px);
+  position: relative;
+  z-index: 0;
+}
+
+.combo-stage-hint {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* COLUNA DE INFORMAÇÕES E LISTA DO QUE TOMAR */
+.combo-info-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.combo-routine-title-header {
+  font-size: 0.9rem;
+  color: var(--primary-orange);
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0.5px;
+}
+
+.combo-routine-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.combo-routine-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.6rem 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.combo-routine-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 107, 0, 0.35);
+  transform: translateX(3px);
+}
+
+.combo-routine-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 3px;
+}
+
+.combo-routine-thumb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.combo-routine-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.combo-routine-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.combo-routine-prod-name {
+  color: #FFF;
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.combo-routine-badge {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.55rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.combo-routine-instruction {
+  color: #94A3B8;
+  font-size: 0.77rem;
+  margin: 0.2rem 0 0;
+  line-height: 1.35;
+}
+
+.combo-routine-instruction strong {
+  color: var(--primary-orange);
+}
+
+/* CARD DE PREÇO E AÇÃO */
+.combo-price-card {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 107, 0, 0.35);
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.combo-price-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.combo-price-label {
+  font-size: 0.76rem;
+  color: #CBD5E1;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.combo-discount-badge {
+  background: var(--accent-green);
+  color: #000;
+  font-size: 0.74rem;
+  font-weight: 900;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.combo-price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.combo-price-from {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.combo-price-to {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  white-space: nowrap;
+}
+
+.combo-price-sublabel {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.combo-oldprice {
+  text-decoration: line-through;
+  color: #94A3B8;
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.combo-newprice {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: var(--accent-green);
+  line-height: 1;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+}
+
+.combo-btn-cta {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  font-size: 1rem;
+  font-weight: 900;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(255, 107, 0, 0.4);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.combo-trust-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  margin-top: 0.65rem;
+  font-size: 0.72rem;
+  color: #94A3B8;
+}
+
+.combo-btn-restart {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-align: center;
+  margin-top: 0.5rem;
+  display: block;
+  width: 100%;
+  transition: color 0.2s;
+}
+
+.combo-btn-restart:hover {
+  color: #FFF;
+}
+
 /* --------------------------------------------------------------------------
    PREMIUM BUTTON STYLING (SALVAR ALTERAÇÕES & EXTRATO DE MOVIMENTAÇÃO)
    -------------------------------------------------------------------------- */

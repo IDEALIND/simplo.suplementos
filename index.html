@@ -13,10 +13,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- Supabase Cloud Database Client -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script id="supabase-js-sdk" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onload="if(typeof initSupabaseClient==='function') initSupabaseClient();"></script>
 
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=4.1.0">
 </head>
 <body>
 
@@ -183,7 +183,7 @@
           <div class="title-line"></div>
         </div>
 
-        <div class="categories-grid">
+        <div class="categories-grid" id="homepage-categories-grid">
           <a href="#loja" class="category-card" onclick="filterByCategory('hipertrofia')">
             <div class="category-img-wrap">
               <img src="whey_integralmedica.png" alt="Whey Protein" class="category-img">
@@ -236,7 +236,7 @@
 
     <!-- SEÇÃO RECOMENDADOR INTERATIVO DE COMBOS DO VENDEDOR VARELA -->
     <section id="recomendador-combos" style="padding: 4rem 0; background: linear-gradient(180deg, rgba(8, 19, 33, 0.6) 0%, rgba(10, 28, 48, 0.9) 100%); position: relative; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05);">
-      <div class="container" style="max-width: 900px;">
+      <div class="container" style="max-width: 1040px;">
         
         <div style="text-align: center; margin-bottom: 2.5rem;">
           <span style="background: rgba(255, 107, 0, 0.15); color: var(--primary-orange); border: 1px solid var(--primary-orange); padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.4rem;">
@@ -366,52 +366,88 @@
             </div>
           </div>
 
-          <!-- RESULTADO FINAL: COMBO PERSONALIZADO GERADO -->
+          <!-- RESULTADO FINAL: COMBO PERSONALIZADO GERADO (MOSTRA A IMAGEM DE TUDO O QUE DEVE TOMAR) -->
           <div id="quiz-step-result" class="quiz-step-content" style="display: none;">
+            
             <div style="text-align: center; margin-bottom: 1.5rem;">
-              <span style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">
-                <i class="fa-solid fa-circle-check"></i> SEU COMBO SINGULAR FOI GERADO!
+              <span style="background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); padding: 0.35rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.4rem;">
+                <i class="fa-solid fa-circle-check"></i> PROTOCOLO DE SUPLEMENTAÇÃO GERADO COM SUCESSO!
               </span>
-              <h3 id="result-combo-title" style="font-size: 1.6rem; color: #fff; margin-top: 0.6rem; font-weight: 900;">
+              <h3 id="result-combo-title" style="font-size: 1.8rem; color: #fff; margin-top: 0.6rem; font-weight: 900; line-height: 1.2;">
                 Combo Hipertrofia Elite Varela
               </h3>
-              <p id="result-combo-desc" style="color: var(--text-muted); font-size: 0.85rem; max-width: 600px; margin: 0.4rem auto 0;">
+              <p id="result-combo-desc" style="color: var(--text-muted); font-size: 0.9rem; max-width: 650px; margin: 0.4rem auto 0; line-height: 1.4;">
                 Recomendação personalizada para quem treina 5 a 7x na semana com foco em Massa Muscular.
               </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; align-items: center; background: rgba(10, 28, 48, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 1.5rem;">
+            <!-- APRESENTAÇÃO INTEGRADA DO COMBO (TODOS OS PRODUTOS JUNTOS SEM CARDS) -->
+            <div class="combo-result-container">
               
-              <div style="text-align: center;">
-                <img id="result-combo-img" src="hero_supplements_pedestal.png" alt="Combo Personalizado" style="max-height: 180px; width: auto; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));">
+              <!-- COLUNA ESQUERDA: PALCO COM TODAS AS FOTOS SEM FUNDO JUNTAS -->
+              <div class="combo-stage-wrap">
+                <div class="combo-stage-tag">
+                  <i class="fa-solid fa-layer-group"></i> SEU PROTOCOLO COMPLETO
+                </div>
+                <div id="result-combo-unified-stage" class="combo-unified-stage">
+                  <!-- Injetado dinamicamente via JS: fotos sem fundo juntas no mesmo palco -->
+                </div>
+                <div class="combo-stage-shadow"></div>
+                <div class="combo-stage-pedestal"></div>
+                <div class="combo-stage-hint">
+                  <i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i> Todos os suplementos indicados inclusos no pacote
+                </div>
               </div>
 
-              <div>
-                <h4 style="font-size: 0.9rem; color: var(--primary-orange); font-weight: 800; text-transform: uppercase; margin-bottom: 0.6rem;">
-                  <i class="fa-solid fa-box-open"></i> O que está incluso no seu combo:
-                </h4>
-                <ul id="result-combo-items" style="list-style: none; padding: 0; margin: 0 0 1.2rem 0; font-size: 0.88rem; color: #E2E8F0; display: flex; flex-direction: column; gap: 0.4rem;">
-                  <!-- Preenchido via JS -->
-                </ul>
-
-                <div style="display: flex; align-items: baseline; gap: 0.6rem; margin-bottom: 1rem;">
-                  <span id="result-combo-oldprice" style="text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem;">R$ 299,90</span>
-                  <span id="result-combo-price" style="font-size: 1.8rem; font-weight: 900; color: var(--accent-green);">R$ 219,90</span>
-                  <span id="result-combo-badge" style="background: var(--accent-green); color: #000; font-size: 0.75rem; font-weight: 900; padding: 0.2rem 0.6rem; border-radius: 6px;">ECONOMIZE R$ 80</span>
+              <!-- COLUNA DIREITA: O QUE TOMAR, PREÇO E AÇÃO -->
+              <div class="combo-info-wrap">
+                
+                <div class="combo-routine-section">
+                  <h4 class="combo-routine-title-header">
+                    <i class="fa-solid fa-prescription-bottle-medical"></i> O que você deve tomar (Rotina Diária):
+                  </h4>
+                  <div id="result-combo-routine-list" class="combo-routine-list">
+                    <!-- Injetado via JS -->
+                  </div>
                 </div>
 
-                <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                  <button id="btn-add-quiz-combo" type="button" class="btn-checkout-whatsapp" style="padding: 0.8rem; font-size: 0.9rem;">
-                    <i class="fa-solid fa-cart-plus"></i> Adicionar Meu Combo ao Carrinho
+                <div class="combo-price-card">
+                  <div class="combo-price-top-bar">
+                    <span class="combo-price-label"><i class="fa-solid fa-tags" style="color: var(--primary-orange);"></i> VALOR DO KIT COMPLETO</span>
+                    <span id="result-combo-badge" class="combo-discount-badge">ECONOMIZE R$ 80</span>
+                  </div>
+
+                  <div class="combo-price-main">
+                    <div class="combo-price-from">
+                      <span class="combo-price-sublabel">De:</span>
+                      <span id="result-combo-oldprice" class="combo-oldprice">R$ 299,90</span>
+                    </div>
+                    <div class="combo-price-to">
+                      <span class="combo-price-sublabel">Por apenas:</span>
+                      <span id="result-combo-price" class="combo-newprice">R$ 219,90</span>
+                    </div>
+                  </div>
+
+                  <button id="btn-add-quiz-combo" type="button" class="btn-checkout-whatsapp combo-btn-cta">
+                    <i class="fa-solid fa-cart-shopping"></i> Adicionar Kit Completo ao Carrinho
                   </button>
-                  
-                  <button type="button" onclick="restartQuiz()" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; text-decoration: underline; text-align: center;">
+
+                  <div class="combo-trust-row">
+                    <span><i class="fa-solid fa-shield-halved" style="color: var(--accent-green);"></i> Produtos 100% Originais</span>
+                    <span><i class="fa-solid fa-truck-fast" style="color: var(--primary-orange);"></i> Envio Imediato</span>
+                  </div>
+
+                  <button type="button" onclick="restartQuiz()" class="combo-btn-restart">
                     <i class="fa-solid fa-rotate-left"></i> Refazer teste de recomendação
                   </button>
                 </div>
+
               </div>
 
             </div>
+
+            <!-- Elementos auxiliares para compatibilidade -->
+            <ul id="result-combo-items" style="display: none;"></ul>
 
           </div>
 
@@ -928,23 +964,63 @@
           </button>
         </div>
 
-        <!-- GERENCIADOR DE CATEGORIAS E FILTROS DA LOJA -->
+        <!-- GERENCIADOR DE CATEGORIAS E FILTROS DA LOJA COM IMAGENS EDITÁVEIS -->
         <div style="background: var(--card-bg); border: 1px solid var(--accent-cyan); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem;">
-          <h4 style="font-size: 1.05rem; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
-            <i class="fa-solid fa-tags" style="color: var(--accent-cyan);"></i> Gerenciador de Categorias & Filtros da Loja
-          </h4>
-          <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.2rem;">Crie novos filtros de categorias para organizar seus suplementos na vitrine principal.</p>
-
-          <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1.2rem; align-items: center;">
-            <input type="text" id="input-manage-cat-name" class="admin-input-field" placeholder="Nome da Nova Categoria (Ex: EMAGRECIMENTO, BCAA, SHAKERS)..." style="flex: 1; min-width: 240px;">
-            <button type="button" onclick="createNewCategoryFromAdmin()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #0284C7); font-size: 0.85rem; padding: 0.65rem 1.2rem; font-weight: 800;">
-              <i class="fa-solid fa-folder-plus"></i> Criar Nova Categoria & Filtro
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.8rem;">
+            <div>
+              <h4 style="font-size: 1.1rem; color: #fff; margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-layer-group" style="color: var(--accent-cyan);"></i> Gerenciador de Categorias & Imagens da Vitrine
+              </h4>
+              <p style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.3rem; margin-bottom: 0;">
+                Personalize os títulos, filtros de produtos e <strong>troque as imagens de cada categoria</strong> exibidas na vitrine principal da loja.
+              </p>
+            </div>
+            <button type="button" onclick="resetCategoriesToDefault()" class="btn-outline" style="font-size: 0.75rem; padding: 0.4rem 0.8rem; border-color: rgba(255,255,255,0.2); color: var(--text-muted); cursor: pointer;">
+              <i class="fa-solid fa-rotate-left"></i> Restaurar Categorias Padrão
             </button>
           </div>
 
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.6rem; font-weight: 700; text-transform: uppercase;">Categorias Ativas na Loja:</div>
-          <div id="manage-categories-list" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
-            <!-- Preenchido via JS -->
+          <!-- CRIAR NOVA CATEGORIA COM IMAGEM -->
+          <div style="background: rgba(10, 28, 48, 0.75); border: 1px dashed rgba(2, 132, 199, 0.5); padding: 1.2rem; border-radius: 16px; margin-bottom: 1.5rem;">
+            <div style="font-weight: 800; color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fa-solid fa-circle-plus"></i> Criar Nova Categoria com Foto Personalizada
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; margin-bottom: 0.8rem;">
+              <div>
+                <label class="admin-input-label" style="font-size: 0.75rem;">Nome da Categoria:</label>
+                <input type="text" id="input-new-cat-title" class="admin-input-field" placeholder="Ex: CREATINAS, BARRINHAS, SHAKERS...">
+              </div>
+              <div>
+                <label class="admin-input-label" style="font-size: 0.75rem;">Filtro de Produtos Relacionado:</label>
+                <select id="input-new-cat-filter-id" class="admin-input-field">
+                  <option value="hipertrofia">🔥 Hipertrofia & Ganho</option>
+                  <option value="performance">⚡ Pré-Treino & Energia</option>
+                  <option value="saude">🛡️ Força & Saúde</option>
+                  <option value="all">⭐ Todos os Produtos</option>
+                </select>
+              </div>
+              <div>
+                <label class="admin-input-label" style="font-size: 0.75rem;">Upload da Foto (do Celular/PC):</label>
+                <input type="file" id="input-new-cat-image-file" accept="image/*" class="admin-input-field" style="padding: 0.4rem;">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center;">
+              <input type="text" id="input-new-cat-image-url" class="admin-input-field" placeholder="Ou cole a URL da Imagem (opcional)..." style="flex: 1; min-width: 220px;">
+              <button type="button" onclick="addNewStoreCategoryWithImage()" class="btn-primary" style="background: linear-gradient(135deg, var(--accent-cyan), #0284C7); font-size: 0.85rem; padding: 0.65rem 1.4rem; font-weight: 800; white-space: nowrap;">
+                <i class="fa-solid fa-plus-circle"></i> Salvar & Publicar Categoria
+              </button>
+            </div>
+          </div>
+
+          <div style="font-size: 0.85rem; color: #FFF; margin-bottom: 0.8rem; font-weight: 800; text-transform: uppercase;">
+            <i class="fa-solid fa-grid-2"></i> Categorias com Imagens Editáveis na Loja:
+          </div>
+
+          <!-- GRID DE CARDS DAS CATEGORIAS COM IMAGEM E BOTÃO EDITAR -->
+          <div id="manage-categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem;">
+            <!-- Preenchido via JavaScript -->
           </div>
         </div>
 
@@ -1033,7 +1109,7 @@
               <i class="fa-solid fa-cloud-bolt"></i> Banco de Dados em Nuvem Supabase (Sincronização Online Realtime)
             </label>
             <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4;">
-              Conecte seu projeto Supabase para sincronizar pedidos, estoque e produtos em tempo real entre celulares e computadores.
+              Conecte seu projeto Supabase para sincronizar pedidos, estoque e produtos em tempo real. A conexão será fixada e salva permanentemente no seu navegador com reconexão automática.
             </p>
 
             <div style="display: flex; flex-direction: column; gap: 0.6rem;">
@@ -1043,11 +1119,11 @@
               </div>
               <div>
                 <label class="admin-input-label" style="font-size: 0.75rem;">Chave Pública Anon (SUPABASE_ANON_KEY):</label>
-                <input type="password" id="input-supabase-key" class="admin-input-field" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                <input type="password" id="input-supabase-key" class="admin-input-field" placeholder="Cole sua Chave Pública (anon key)...">
               </div>
               <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem; align-items: center;">
                 <button type="button" id="btn-connect-supabase" onclick="saveSupabaseConfig()" class="btn-primary" style="background: linear-gradient(135deg, #059669, #10B981); flex: 1; font-size: 0.85rem; padding: 0.65rem;">
-                  <i class="fa-solid fa-plug"></i> Conectar Banco de Dados Supabase
+                  <i class="fa-solid fa-plug"></i> Fixar & Conectar Banco de Dados Supabase
                 </button>
                 <span id="supabase-status-badge" class="stock-status-badge status-low" style="white-space: nowrap;">
                   🟡 Local (Desconectado)
@@ -1157,10 +1233,10 @@
                 </div>
                 <div class="admin-input-group">
                   <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
-                  <input type="text" id="combo-img-massa_essencial" class="admin-input-field" value="whey_integralmedica.png">
+                  <input type="text" id="combo-img-massa_essencial" class="admin-input-field" value="hero_supplements_pedestal.png">
                   <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
-                    <img id="combo-img-preview-massa_essencial" src="whey_integralmedica.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                    <img id="combo-img-preview-massa_essencial" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
                   </div>
                 </div>
               </div>
@@ -1208,10 +1284,10 @@
                 </div>
                 <div class="admin-input-group">
                   <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
-                  <input type="text" id="combo-img-definicao_pro" class="admin-input-field" value="pretreino_horus.png">
+                  <input type="text" id="combo-img-definicao_pro" class="admin-input-field" value="hero_supplements_pedestal.png">
                   <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
-                    <img id="combo-img-preview-definicao_pro" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                    <img id="combo-img-preview-definicao_pro" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
                   </div>
                 </div>
               </div>
@@ -1260,10 +1336,10 @@
                 </div>
                 <div class="admin-input-group">
                   <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
-                  <input type="text" id="combo-img-definicao_essencial" class="admin-input-field" value="pretreino_horus.png">
+                  <input type="text" id="combo-img-definicao_essencial" class="admin-input-field" value="hero_supplements_pedestal.png">
                   <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
-                    <img id="combo-img-preview-definicao_essencial" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                    <img id="combo-img-preview-definicao_essencial" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
                   </div>
                 </div>
               </div>
@@ -1363,10 +1439,10 @@
                 </div>
                 <div class="admin-input-group">
                   <label class="admin-input-label">Ou Caminho / URL da Imagem:</label>
-                  <input type="text" id="combo-img-energia_essencial" class="admin-input-field" value="pretreino_horus.png">
+                  <input type="text" id="combo-img-energia_essencial" class="admin-input-field" value="hero_supplements_pedestal.png">
                   <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">Preview:</span>
-                    <img id="combo-img-preview-energia_essencial" src="pretreino_horus.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
+                    <img id="combo-img-preview-energia_essencial" src="hero_supplements_pedestal.png" style="max-height: 50px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2);">
                   </div>
                 </div>
               </div>
@@ -1791,14 +1867,14 @@
           <label style="font-size: 0.8rem; font-weight: 800; color: #fff; display: block; margin-bottom: 0.4rem;">
             <i class="fa-solid fa-user" style="color: var(--accent-green);"></i> Usuário do Gestor:
           </label>
-          <input type="text" id="input-admin-username" class="admin-input-field" placeholder="Digite o usuário..." style="font-size: 1rem;">
+          <input type="text" id="input-admin-username" class="admin-input-field" placeholder="Digite o usuário (ex: admin)..." style="font-size: 1rem;">
         </div>
 
         <div>
           <label style="font-size: 0.8rem; font-weight: 800; color: #fff; display: block; margin-bottom: 0.4rem;">
             <i class="fa-solid fa-key" style="color: var(--accent-green);"></i> Senha de Acesso:
           </label>
-          <input type="password" id="input-admin-password" class="admin-input-field" placeholder="Digite a senha..." style="font-size: 1rem;">
+          <input type="password" id="input-admin-password" class="admin-input-field" placeholder="Digite a senha (ex: admin)..." style="font-size: 1rem;">
         </div>
       </div>
 
@@ -1809,6 +1885,6 @@
   </div>
 
   <!-- Script Principal com Invalidação de Cache -->
-  <script src="script.js?v=3.6.0"></script>
+  <script src="script.js?v=4.1.0"></script>
 </body>
 </html>

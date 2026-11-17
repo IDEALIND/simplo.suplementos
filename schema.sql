@@ -1,6 +1,6 @@
 -- ============================================================================
 -- BANCO DE DADOS SUPABASE - SIMPLO SUPLEMENTOS
--- Copie e cole este código no SQL Editor do Supabase para criar as tabelas!
+-- Copie todo o código abaixo e cole no SQL Editor do Supabase!
 -- ============================================================================
 
 -- 1. TABELA DE PRODUTOS
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS public.coupons (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
 
--- 5. TABELA DE CONFIGURAÇÕES DA LOJA (CHAVE PIX, WHATSAPP, BANNER)
+-- 5. TABELA DE CONFIGURAÇÕES DA LOJA (CHAVE PIX, WHATSAPP, CATEGORIAS)
 CREATE TABLE IF NOT EXISTS public.store_settings (
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL,
@@ -80,7 +80,7 @@ CREATE POLICY "Acesso público total movimentacoes" ON public.stock_movements FO
 CREATE POLICY "Acesso público total cupons" ON public.coupons FOR ALL USING (true);
 CREATE POLICY "Acesso público total configuracoes" ON public.store_settings FOR ALL USING (true);
 
--- REGISTROS INICIAIS DE TESTE (OPCIONAL)
+-- REGISTROS INICIAIS DE CUPONS (OPCIONAL)
 INSERT INTO public.coupons (code, discount, uses, status) VALUES
 ('SIMPLO10', '10% OFF em todo o site', '0 vezes', 'Ativo'),
 ('ENTREGAHOJE', 'R$ 15,00 OFF de Frete Grátis', '0 vezes', 'Ativo'),
